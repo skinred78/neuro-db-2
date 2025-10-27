@@ -1,0 +1,66 @@
+[
+  {
+    "term": "Binocular rivalry",
+    "file": "B.csv",
+    "provided_mesh": "Vision Binocular",
+    "status": "INCORRECT",
+    "recommendation": "Depth Perception",
+    "alternatives": [
+      "Depth Perception",
+      "Stereopsis",
+      "Vision",
+      "Visual Perception"
+    ],
+    "action": "REQUIRES CORRECTION"
+  },
+  {
+    "term": "Broca's aphasia",
+    "file": "B.csv",
+    "provided_mesh": "Broca Aphasia",
+    "status": "INCORRECT",
+    "recommendation": "Aphasia",
+    "alternatives": [
+      "Aphasia",
+      "Language Disorders",
+      "Speech Disorders"
+    ],
+    "action": "REQUIRES CORRECTION"
+  },
+  {
+    "term": "Cerebral hemisphere",
+    "file": "C.csv",
+    "provided_mesh": "Cerebral Hemisphere",
+    "status": "INCORRECT",
+    "recommendation": "Brain",
+    "alternatives": [
+      "Brain",
+      "Cerebrum",
+      "Telencephalon"
+    ],
+    "action": "REQUIRES CORRECTION"
+  },
+  {
+    "term": "Chromatolysis",
+    "file": "C.csv",
+    "provided_mesh": "Chromatolysis",
+    "status": "INCORRECT",
+    "recommendation": "Nerve Degeneration",
+    "alternatives": [
+      "Nerve Degeneration"
+    ],
+    "action": "REQUIRES CORRECTION"
+  },
+  {
+    "term": "Cross modal plasticity",
+    "file": "C.csv",
+    "provided_mesh": "Cross-modal plasticity",
+    "status": "INCORRECT",
+    "recommendation": "Neuronal Plasticity",
+    "alternatives": [
+      "Brain Plasticity",
+      "Neuronal Plasticity",
+      "Sensory Deprivation"
+    ],
+    "action": "REQUIRES CORRECTION"
+  }
+]

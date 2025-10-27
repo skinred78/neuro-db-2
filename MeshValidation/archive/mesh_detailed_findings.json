@@ -1,0 +1,35 @@
+[
+  {
+    "term": "Binocular rivalry",
+    "provided": "Vision Binocular",
+    "status": "NOT_IN_MESH",
+    "note": "Concept may not have a MeSH descriptor"
+  },
+  {
+    "term": "Broca's aphasia",
+    "provided": "Broca Aphasia",
+    "suggested": "Broca Aphasia",
+    "status": "SUGGESTION",
+    "all_matches": [
+      "Broca Aphasia"
+    ]
+  },
+  {
+    "term": "Cerebral hemisphere",
+    "provided": "Cerebral Hemisphere",
+    "status": "NOT_IN_MESH",
+    "note": "Concept may not have a MeSH descriptor"
+  },
+  {
+    "term": "Chromatolysis",
+    "provided": "Chromatolysis",
+    "status": "NOT_IN_MESH",
+    "note": "Concept may not have a MeSH descriptor"
+  },
+  {
+    "term": "Cross modal plasticity",
+    "provided": "Cross-modal plasticity",
+    "status": "NOT_IN_MESH",
+    "note": "Concept may not have a MeSH descriptor"
+  }
+]

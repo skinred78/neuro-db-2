@@ -1,0 +1,5 @@
+Letter,Term,Original MeSH,Corrected MeSH,Date,Status
+V,Voxel-based morphometry,,Neuroimaging,2025-10-22,added_missing_term
+X-linked intellectual disability,X,Mental Retardation\, X-Linked,X-Linked Intellectual Disability,mesh-validator,2025-10-22,Updated to current MeSH terminology
+X,X-linked intellectual disability,"Intellectual Disability, X-Linked",X-Linked Intellectual Disability,2025-10-27,mesh-validator
+X,Xenotransplantation,Heterologous Transplantation,"Transplantation, Heterologous",2025-10-27,mesh-validator

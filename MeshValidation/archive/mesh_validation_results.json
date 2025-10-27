@@ -1,0 +1,381 @@
+[
+  {
+    "file": "B.csv",
+    "term": "Babinski sign",
+    "mesh_provided": "Reflex, Babinski",
+    "status": "VERIFIED",
+    "official_label": "Reflex, Babinski",
+    "match": "EXACT"
+  },
+  {
+    "file": "B.csv",
+    "term": "Barrel cortex",
+    "mesh_provided": "Somatosensory Cortex",
+    "status": "VERIFIED",
+    "official_label": "Somatosensory Cortex",
+    "match": "EXACT"
+  },
+  {
+    "file": "B.csv",
+    "term": "Baroreceptor",
+    "mesh_provided": "Pressoreceptors",
+    "status": "VERIFIED",
+    "official_label": "Pressoreceptors",
+    "match": "EXACT"
+  },
+  {
+    "file": "B.csv",
+    "term": "Basal ganglia",
+    "mesh_provided": "Basal Ganglia",
+    "status": "VERIFIED",
+    "official_label": "Basal Ganglia",
+    "match": "EXACT"
+  },
+  {
+    "file": "B.csv",
+    "term": "Behavioral neuroscience",
+    "mesh_provided": "Neurosciences",
+    "status": "VERIFIED",
+    "official_label": "Neurosciences",
+    "match": "EXACT"
+  },
+  {
+    "file": "B.csv",
+    "term": "Beta wave",
+    "mesh_provided": "Beta Rhythm",
+    "status": "VERIFIED",
+    "official_label": "Beta Rhythm",
+    "match": "EXACT"
+  },
+  {
+    "file": "B.csv",
+    "term": "Binocular rivalry",
+    "mesh_provided": "Vision Binocular",
+    "status": "NOT_FOUND",
+    "error": "Empty response"
+  },
+  {
+    "file": "B.csv",
+    "term": "Bipolar cell",
+    "mesh_provided": "Retinal Bipolar Cells",
+    "status": "VERIFIED",
+    "official_label": "Retinal Bipolar Cells",
+    "match": "EXACT"
+  },
+  {
+    "file": "B.csv",
+    "term": "Bipolar disorder",
+    "mesh_provided": "Bipolar Disorder",
+    "status": "VERIFIED",
+    "official_label": "Bipolar Disorder",
+    "match": "EXACT"
+  },
+  {
+    "file": "B.csv",
+    "term": "Blood–brain barrier",
+    "mesh_provided": "Blood-Brain Barrier",
+    "status": "VERIFIED",
+    "official_label": "Blood-Brain Barrier",
+    "match": "EXACT"
+  },
+  {
+    "file": "B.csv",
+    "term": "Bouton",
+    "mesh_provided": "Presynaptic Terminals",
+    "status": "VERIFIED",
+    "official_label": "Presynaptic Terminals",
+    "match": "EXACT"
+  },
+  {
+    "file": "B.csv",
+    "term": "Brain",
+    "mesh_provided": "Brain",
+    "status": "VERIFIED",
+    "official_label": "Brain",
+    "match": "EXACT"
+  },
+  {
+    "file": "B.csv",
+    "term": "Brain-derived neurotrophic factor",
+    "mesh_provided": "Brain-Derived Neurotrophic Factor",
+    "status": "VERIFIED",
+    "official_label": "Brain-Derived Neurotrophic Factor",
+    "match": "EXACT"
+  },
+  {
+    "file": "B.csv",
+    "term": "Brain plasticity",
+    "mesh_provided": "Neuronal Plasticity",
+    "status": "VERIFIED",
+    "official_label": "Neuronal Plasticity",
+    "match": "EXACT"
+  },
+  {
+    "file": "B.csv",
+    "term": "Brainstem",
+    "mesh_provided": "Brain Stem",
+    "status": "VERIFIED",
+    "official_label": "Brain Stem",
+    "match": "EXACT"
+  },
+  {
+    "file": "B.csv",
+    "term": "Brain ventricles",
+    "mesh_provided": "Cerebral Ventricles",
+    "status": "VERIFIED",
+    "official_label": "Cerebral Ventricles",
+    "match": "EXACT"
+  },
+  {
+    "file": "B.csv",
+    "term": "Brain waves",
+    "mesh_provided": "Brain Waves",
+    "status": "VERIFIED",
+    "official_label": "Brain Waves",
+    "match": "EXACT"
+  },
+  {
+    "file": "B.csv",
+    "term": "Brain-computer interface",
+    "mesh_provided": "Brain-Computer Interfaces",
+    "status": "VERIFIED",
+    "official_label": "Brain-Computer Interfaces",
+    "match": "EXACT"
+  },
+  {
+    "file": "B.csv",
+    "term": "Bradykinesia",
+    "mesh_provided": "Hypokinesia",
+    "status": "VERIFIED",
+    "official_label": "Hypokinesia",
+    "match": "EXACT"
+  },
+  {
+    "file": "B.csv",
+    "term": "Broca's area",
+    "mesh_provided": "Broca Area",
+    "status": "VERIFIED",
+    "official_label": "Broca Area",
+    "match": "EXACT"
+  },
+  {
+    "file": "B.csv",
+    "term": "Broca's aphasia",
+    "mesh_provided": "Broca Aphasia",
+    "status": "NOT_FOUND",
+    "error": "Empty response"
+  },
+  {
+    "file": "B.csv",
+    "term": "Burst firing",
+    "mesh_provided": "Action Potentials",
+    "status": "VERIFIED",
+    "official_label": "Action Potentials",
+    "match": "EXACT"
+  },
+  {
+    "file": "C.csv",
+    "term": "Calcium channel",
+    "mesh_provided": "Calcium Channels",
+    "status": "VERIFIED",
+    "official_label": "Calcium Channels",
+    "match": "EXACT"
+  },
+  {
+    "file": "C.csv",
+    "term": "Capsaicin",
+    "mesh_provided": "Capsaicin",
+    "status": "VERIFIED",
+    "official_label": "Capsaicin",
+    "match": "EXACT"
+  },
+  {
+    "file": "C.csv",
+    "term": "Caudate nucleus",
+    "mesh_provided": "Caudate Nucleus",
+    "status": "VERIFIED",
+    "official_label": "Caudate Nucleus",
+    "match": "EXACT"
+  },
+  {
+    "file": "C.csv",
+    "term": "Central nervous system",
+    "mesh_provided": "Central Nervous System",
+    "status": "VERIFIED",
+    "official_label": "Central Nervous System",
+    "match": "EXACT"
+  },
+  {
+    "file": "C.csv",
+    "term": "Cerebellum",
+    "mesh_provided": "Cerebellum",
+    "status": "VERIFIED",
+    "official_label": "Cerebellum",
+    "match": "EXACT"
+  },
+  {
+    "file": "C.csv",
+    "term": "Cerebral cortex",
+    "mesh_provided": "Cerebral Cortex",
+    "status": "VERIFIED",
+    "official_label": "Cerebral Cortex",
+    "match": "EXACT"
+  },
+  {
+    "file": "C.csv",
+    "term": "Cerebral hemisphere",
+    "mesh_provided": "Cerebral Hemisphere",
+    "status": "NOT_FOUND",
+    "error": "Empty response"
+  },
+  {
+    "file": "C.csv",
+    "term": "Cerebrospinal fluid",
+    "mesh_provided": "Cerebrospinal Fluid",
+    "status": "VERIFIED",
+    "official_label": "Cerebrospinal Fluid",
+    "match": "EXACT"
+  },
+  {
+    "file": "C.csv",
+    "term": "Chemoreceptor",
+    "mesh_provided": "Chemoreceptor Cells",
+    "status": "VERIFIED",
+    "official_label": "Chemoreceptor Cells",
+    "match": "EXACT"
+  },
+  {
+    "file": "C.csv",
+    "term": "Cholinergic",
+    "mesh_provided": "Cholinergic Neurons",
+    "status": "VERIFIED",
+    "official_label": "Cholinergic Neurons",
+    "match": "EXACT"
+  },
+  {
+    "file": "C.csv",
+    "term": "Choroid plexus",
+    "mesh_provided": "Choroid Plexus",
+    "status": "VERIFIED",
+    "official_label": "Choroid Plexus",
+    "match": "EXACT"
+  },
+  {
+    "file": "C.csv",
+    "term": "Chromatolysis",
+    "mesh_provided": "Chromatolysis",
+    "status": "NOT_FOUND",
+    "error": "Empty response"
+  },
+  {
+    "file": "C.csv",
+    "term": "Cingulate cortex",
+    "mesh_provided": "Gyrus Cinguli",
+    "status": "VERIFIED",
+    "official_label": "Gyrus Cinguli",
+    "match": "EXACT"
+  },
+  {
+    "file": "C.csv",
+    "term": "Cognition",
+    "mesh_provided": "Cognition",
+    "status": "VERIFIED",
+    "official_label": "Cognition",
+    "match": "EXACT"
+  },
+  {
+    "file": "C.csv",
+    "term": "Cognitive neuroscience",
+    "mesh_provided": "Cognitive Neuroscience",
+    "status": "VERIFIED",
+    "official_label": "Cognitive Neuroscience",
+    "match": "EXACT"
+  },
+  {
+    "file": "C.csv",
+    "term": "Commissure",
+    "mesh_provided": "Telencephalic Commissures",
+    "status": "VERIFIED",
+    "official_label": "Telencephalic Commissures",
+    "match": "EXACT"
+  },
+  {
+    "file": "C.csv",
+    "term": "Conditioned stimulus",
+    "mesh_provided": "Conditioning, Classical",
+    "status": "VERIFIED",
+    "official_label": "Conditioning, Classical",
+    "match": "EXACT"
+  },
+  {
+    "file": "C.csv",
+    "term": "Conduction velocity",
+    "mesh_provided": "Neural Conduction",
+    "status": "VERIFIED",
+    "official_label": "Neural Conduction",
+    "match": "EXACT"
+  },
+  {
+    "file": "C.csv",
+    "term": "Consciousness",
+    "mesh_provided": "Consciousness",
+    "status": "VERIFIED",
+    "official_label": "Consciousness",
+    "match": "EXACT"
+  },
+  {
+    "file": "C.csv",
+    "term": "Corpus callosum",
+    "mesh_provided": "Corpus Callosum",
+    "status": "VERIFIED",
+    "official_label": "Corpus Callosum",
+    "match": "EXACT"
+  },
+  {
+    "file": "C.csv",
+    "term": "Cortical column",
+    "mesh_provided": "Cerebral Cortex",
+    "status": "VERIFIED",
+    "official_label": "Cerebral Cortex",
+    "match": "EXACT"
+  },
+  {
+    "file": "C.csv",
+    "term": "Cortical plasticity",
+    "mesh_provided": "Neuronal Plasticity",
+    "status": "VERIFIED",
+    "official_label": "Neuronal Plasticity",
+    "match": "EXACT"
+  },
+  {
+    "file": "C.csv",
+    "term": "Corticospinal tract",
+    "mesh_provided": "Pyramidal Tracts",
+    "status": "VERIFIED",
+    "official_label": "Pyramidal Tracts",
+    "match": "EXACT"
+  },
+  {
+    "file": "C.csv",
+    "term": "Creutzfeldt–Jakob disease",
+    "mesh_provided": "Creutzfeldt-Jakob Syndrome",
+    "status": "VERIFIED",
+    "official_label": "Creutzfeldt-Jakob Syndrome",
+    "match": "EXACT"
+  },
+  {
+    "file": "C.csv",
+    "term": "Critical period",
+    "mesh_provided": "Critical Period, Psychological",
+    "status": "VERIFIED",
+    "official_label": "Critical Period, Psychological",
+    "match": "EXACT"
+  },
+  {
+    "file": "C.csv",
+    "term": "Cross modal plasticity",
+    "mesh_provided": "Cross-modal plasticity",
+    "status": "NOT_FOUND",
+    "error": "Empty response"
+  }
+]

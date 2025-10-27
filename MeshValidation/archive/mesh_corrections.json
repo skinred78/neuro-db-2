@@ -1,0 +1,37 @@
+[
+  {
+    "file": "B.csv",
+    "term": "Binocular rivalry",
+    "incorrect_mesh": "Vision Binocular",
+    "suggested_mesh": null,
+    "confidence": "none"
+  },
+  {
+    "file": "B.csv",
+    "term": "Broca's aphasia",
+    "incorrect_mesh": "Broca Aphasia",
+    "suggested_mesh": "Broca Aphasia",
+    "confidence": "high"
+  },
+  {
+    "file": "C.csv",
+    "term": "Cerebral hemisphere",
+    "incorrect_mesh": "Cerebral Hemisphere",
+    "suggested_mesh": null,
+    "confidence": "none"
+  },
+  {
+    "file": "C.csv",
+    "term": "Chromatolysis",
+    "incorrect_mesh": "Chromatolysis",
+    "suggested_mesh": null,
+    "confidence": "none"
+  },
+  {
+    "file": "C.csv",
+    "term": "Cross modal plasticity",
+    "incorrect_mesh": "Cross-modal plasticity",
+    "suggested_mesh": null,
+    "confidence": "none"
+  }
+]

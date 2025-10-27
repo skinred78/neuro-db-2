@@ -1,0 +1,148 @@
+{
+  "metadata": {
+    "created": "2025-10-22T10:36:48.140001",
+    "purpose": "Track all MeSH term corrections applied during database creation",
+    "total_corrections": 15,
+    "last_updated": "2025-10-27T14:15:56.473934"
+  },
+  "corrections_by_letter": {
+    "B": [
+      {
+        "term": "Binocular rivalry",
+        "old_mesh": "Vision Binocular",
+        "new_mesh": "Depth Perception",
+        "validator": "mesh-validator",
+        "date": "2025-10-22"
+      },
+      {
+        "term": "Broca's aphasia",
+        "old_mesh": "Broca Aphasia",
+        "new_mesh": "Aphasia",
+        "validator": "mesh-validator",
+        "date": "2025-10-22"
+      }
+    ],
+    "C": [
+      {
+        "term": "Cerebral hemisphere",
+        "old_mesh": "Cerebral Hemisphere",
+        "new_mesh": "Cerebrum",
+        "validator": "mesh-validator",
+        "date": "2025-10-22"
+      },
+      {
+        "term": "Chromatolysis",
+        "old_mesh": "Chromatolysis",
+        "new_mesh": "Nerve Degeneration",
+        "validator": "mesh-validator",
+        "date": "2025-10-22"
+      },
+      {
+        "term": "Cross modal plasticity",
+        "old_mesh": "Cross-modal plasticity",
+        "new_mesh": "Neuronal Plasticity",
+        "validator": "mesh-validator",
+        "date": "2025-10-22"
+      }
+    ],
+    "D": [],
+    "E": [],
+    "F": [
+      {
+        "term": "Fight-or-flight response",
+        "old_mesh": "Fight-or-Flight Reaction",
+        "new_mesh": "Stress, Physiological",
+        "validator": "mesh-validator",
+        "date": "2025-10-22"
+      }
+    ],
+    "G": [
+      {
+        "term": "Gag reflex",
+        "old_mesh": "Reflex, Gag",
+        "new_mesh": "Reflex",
+        "validator": "mesh-validator",
+        "date": "2025-10-22"
+      },
+      {
+        "term": "Glutamatergic",
+        "old_mesh": "",
+        "new_mesh": "Glutamic Acid",
+        "validator": "mesh-validator",
+        "date": "2025-10-22"
+      }
+    ],
+    "H": [
+      {
+        "term": "Hemispheres of the brain",
+        "old_mesh": "Cerebral Hemispheres",
+        "new_mesh": "Functional Laterality",
+        "validator": "mesh-validator",
+        "date": "2025-10-22"
+      }
+    ],
+    "J": [
+      {
+        "term": "Joubert syndrome",
+        "old_mesh": "Joubert Syndrome",
+        "new_mesh": "Cerebellar Diseases",
+        "validator": "mesh-validator",
+        "date": "2025-10-22"
+      },
+      {
+        "term": "Juxtacrine signaling",
+        "old_mesh": "Juxtacrine Cell Signaling",
+        "new_mesh": "Cell Communication",
+        "validator": "mesh-validator",
+        "date": "2025-10-22"
+      }
+    ],
+    "K": [
+      {
+        "term": "Karyokinesis",
+        "old_mesh": "Karyokinesis",
+        "new_mesh": "Mitosis",
+        "validator": "mesh-validator",
+        "date": "2025-10-22"
+      },
+      {
+        "term": "Kleptomania",
+        "old_mesh": "Kleptomania",
+        "new_mesh": "Disruptive, Impulse Control, and Conduct Disorders",
+        "validator": "mesh-validator",
+        "date": "2025-10-22"
+      }
+    ],
+    "X": [
+      {
+        "term": "X-linked intellectual disability",
+        "old_mesh": "Intellectual Disability, X-Linked",
+        "new_mesh": "X-Linked Intellectual Disability",
+        "validator": "mesh-validator",
+        "date": "2025-10-27",
+        "note": "Corrected comma placement and word order"
+      },
+      {
+        "term": "Xenotransplantation",
+        "old_mesh": "Heterologous Transplantation",
+        "new_mesh": "Transplantation, Heterologous",
+        "validator": "mesh-validator",
+        "date": "2025-10-27",
+        "note": "Corrected word order (MeSH uses inverted format)"
+      }
+    ]
+  },
+  "summary_by_validator": {
+    "mesh-validator": 15,
+    "neuro-reviewer": 0
+  },
+  "V": [
+    {
+      "term": "Voxel-based morphometry",
+      "original_mesh": "",
+      "corrected_mesh": "Neuroimaging",
+      "date": "2025-10-22",
+      "status": "added_missing_term"
+    }
+  ]
+}
