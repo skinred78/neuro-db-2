@@ -1,0 +1,86 @@
+============================================================
+NINDS TERMS EXTRACTION REPORT
+============================================================
+
+NINDS Glossary: 76 terms total
+Existing Database: 515 terms
+Overlapping Terms: 22 terms
+NEW Terms: 54 terms
+
+NEW TERMS BY LETTER:
+------------------------------------------------------------
+  A: 5 terms
+     - Anemia
+     - Apraxia
+     - Atrial Fibrillation
+     - Atrophy
+     - Autosomal Recessive Disorders
+  B: 2 terms
+     - Biomarkers
+     - Blood-brain barrier
+  C: 8 terms
+     - Cephalocele
+     - Cerebral
+     - Cerebral Atrophy
+     - Cerebral Hypoxia
+     - Chorea
+     - Clonus
+     - Coma
+     - Contracture
+  D: 5 terms
+     - Dendrites
+     - Dysautonomia
+     - Dysgraphia
+     - Dysphagia
+     - Dystonia
+  E: 3 terms
+     - Encephalitis
+     - Encephalopathy
+     - Enzymes
+  F: 2 terms
+     - Fasciculations
+     - Fibromuscular dysplasia (FMD)
+  H: 4 terms
+     - Hydromyelia
+     - Hypersomnia
+     - Hypertonia
+     - Hypotonia
+  I: 3 terms
+     - Immunoglobulins
+     - Inflammation
+     - Intravenous immunoglobulin
+  L: 3 terms
+     - Learning Disabilities
+     - Lipidoses
+     - Lipids
+  M: 5 terms
+     - Metabolism
+     - Multi-infarct Dementia
+     - Myelin Sheath
+     - Myelitis
+     - Myotonia
+  N: 4 terms
+     - Nervous System
+     - Neuropathy
+     - Neurosarcoidosis
+     - Neurotoxicity
+  O: 1 terms
+     - Orthostatic Hypotension
+  P: 4 terms
+     - Paresthesia
+     - Pinched Nerve
+     - Plasmapheresis
+     - Platelets
+  R: 1 terms
+     - Rigidity
+  S: 1 terms
+     - Syncope
+  T: 2 terms
+     - Transcutaneous Electrical Nerve Stimulation
+     - Tremor
+  W: 1 terms
+     - Whiplash
+
+============================================================
+CSV templates created in: /Users/sam/NeuroDB-2/scripts/output
+============================================================

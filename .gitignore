@@ -21,3 +21,15 @@ venv/
 
 # Logs
 *.log
+
+# ClaudeKit
+.claude/settings.local.json
+.claude/agents-backup/
+plans/reports/
+node_modules/
+*.tsbuildinfo
+
+# Build artifacts
+dist/
+build/
+.next/

@@ -1,0 +1,77 @@
+{
+  "terms_validated": [
+    "Anemia",
+    "Apraxia",
+    "Atrial Fibrillation",
+    "Atrophy",
+    "Autosomal Recessive Disorders"
+  ],
+  "results": [
+    {
+      "search_term": "Anemia",
+      "mesh_term": "Fanconi Anemia Complementation Group G Protein",
+      "match_type": "close",
+      "confidence": "MEDIUM",
+      "status": "REVIEW_REQUIRED",
+      "mesh_id": "68052241",
+      "alternatives": [
+        "Fanconi Anemia Complementation Group L Protein",
+        "Fanconi Anemia Complementation Group E Protein"
+      ]
+    },
+    {
+      "search_term": "Apraxia",
+      "mesh_term": "Apraxia, Ideomotor",
+      "match_type": "close",
+      "confidence": "MEDIUM",
+      "status": "REVIEW_REQUIRED",
+      "mesh_id": "68020240",
+      "alternatives": [
+        "Gait Apraxia",
+        "Apraxias"
+      ]
+    },
+    {
+      "search_term": "Atrial Fibrillation",
+      "mesh_term": "Atrial Fibrillation",
+      "match_type": "exact",
+      "confidence": "HIGH",
+      "status": "CONFIRMED",
+      "mesh_id": "68001281",
+      "alternatives": [
+        "Atrial Fibrillation, Familial, 8",
+        "Atrial Fibrillation, Familial, 6"
+      ]
+    },
+    {
+      "search_term": "Atrophy",
+      "mesh_term": "Iridocorneal Endothelial Syndrome",
+      "match_type": "close",
+      "confidence": "MEDIUM",
+      "status": "REVIEW_REQUIRED",
+      "mesh_id": "68057129",
+      "alternatives": [
+        "Geographic Atrophy",
+        "Bulbo-Spinal Atrophy, X-Linked"
+      ]
+    },
+    {
+      "search_term": "Autosomal Recessive Disorders",
+      "mesh_term": "Dystonic Disorders",
+      "match_type": "close",
+      "confidence": "MEDIUM",
+      "status": "REVIEW_REQUIRED",
+      "mesh_id": "68020821",
+      "alternatives": [
+        "Parkinsonian Disorders",
+        "Zellweger Syndrome"
+      ]
+    }
+  ],
+  "summary": {
+    "total": 5,
+    "confirmed": 1,
+    "review_needed": 4,
+    "not_found": 0
+  }
+}

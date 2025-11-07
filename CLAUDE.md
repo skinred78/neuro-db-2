@@ -1,9 +1,28 @@
 # CLAUDE.md: Neuroscience Terminology Database
 
-## 1. Project Overview
-This project is a neuroscience terminology database. The agent's job is to help populate this database with terms from B-Z, following a strict, multi-step process.
+## Role & Responsibilities
 
-## 2. Key Files
+Your role is to manage the Neuroscience Terminology Database project, analyze requirements, delegate tasks to appropriate sub-agents, and ensure cohesive delivery of features that meet specifications and quality standards.
+
+## Project Overview
+
+This project is a neuroscience terminology database. The primary objective is to populate this database with terms from B-Z, following strict, multi-step validation processes to ensure data accuracy and completeness.
+
+## Workflows
+
+- Primary workflow: `./.claude/workflows/primary-workflow.md`
+- Development rules: `./.claude/workflows/development-rules.md`
+- Orchestration protocols: `./.claude/workflows/orchestration-protocol.md`
+- Documentation management: `./.claude/workflows/documentation-management.md`
+
+**IMPORTANT:** Follow strictly the development rules in `./.claude/workflows/development-rules.md` file.
+**IMPORTANT:** Sacrifice grammar for the sake of concision when writing reports.
+**IMPORTANT:** In reports, list any unresolved questions at the end, if any.
+
+---
+
+## Key Files
+
 - **Working Files:** `[A-Z].csv` (one CSV file per letter during data collection, e.g., `B.csv`, `C.csv`)
 - **Master Database:** `neuro_terms.csv` (consolidated final database)
 - **Final Output:** `neuro_terms.json`
@@ -13,7 +32,10 @@ This project is a neuroscience terminology database. The agent's job is to help 
   - `mesh_corrections_summary.md` - Human-readable summary
   - `archive/` - Historical validation reports
 
-## 3. Data Schema (for neuro_terms.csv)
+---
+
+## Data Schema (for neuro_terms.csv)
+
 The CSV file MUST contain these exact columns:
 - `Term` - The primary neuroscience term
 - `Term Two` - **ONLY** for alternate representations with special characters removed (e.g., "alpha (α) motor neurons" → "alphamotor neurons"). Used for searchable/ASCII-safe versions. NOT for synonyms or alternative names.
@@ -42,7 +64,10 @@ The CSV file MUST contain these exact columns:
 
 **Note on existing files (B-F):** Letters B through F were created with 19 columns (5 associated terms). These will be backfilled with 3 additional columns after all letters are complete. New letters (G-Z) use the full 22-column schema.
 
-## 4. <instructions> Workflow 1: Adding New Terms </instructions>
+---
+
+## <instructions> Workflow 1: Adding New Terms </instructions>
+
 You MUST follow this 5-step process for every new letter (B-Z).
 
 <step_1>
@@ -112,35 +137,119 @@ You MUST follow this 5-step process for every new letter (B-Z).
   **Action:** Once I approve the CSV block, save it to `[X].csv` (where X is the letter being processed, e.g., `F.csv`). Do not overwrite existing files without confirmation.
 </step_5>
 
-## 5. <instructions> Workflow 2: Merging Letter Files </instructions>
+---
+
+## <instructions> Workflow 2: Merging Letter Files </instructions>
+
 This workflow consolidates all individual letter CSV files into the master database.
 When I ask you to "merge the letters" or "consolidate the database," you must:
-1.  Read all `[A-Z].csv` files in alphabetical order (e.g., `B.csv`, `C.csv`, `D.csv`).
-2.  Combine all rows (preserving headers from the first file only).
-3.  Save the consolidated data to `neuro_terms.csv`.
-4.  Report how many terms were merged from each letter.
+1. Read all `[A-Z].csv` files in alphabetical order (e.g., `B.csv`, `C.csv`, `D.csv`).
+2. Combine all rows (preserving headers from the first file only).
+3. Save the consolidated data to `neuro_terms.csv`.
+4. Report how many terms were merged from each letter.
 
-## 6. <instructions> Workflow 3: Backfilling B-F Files </instructions>
+---
+
+## <instructions> Workflow 3: Backfilling B-F Files </instructions>
+
 After completing letters G-Z with the 22-column schema, backfill the earlier files (B-F) which have 19 columns.
 
 When I ask you to "backfill B-F" or "add columns to B-F," you must:
-1.  Read each file (B.csv, C.csv, D.csv, E.csv, F.csv)
-2.  Add 3 empty columns: "Commonly Associated Term 6", "Commonly Associated Term 7", "Commonly Associated Term 8"
-3.  Optionally: Enrich with additional associated terms where appropriate
-4.  Save the updated files with 22 columns
-5.  Report completion for each file
+1. Read each file (B.csv, C.csv, D.csv, E.csv, F.csv)
+2. Add 3 empty columns: "Commonly Associated Term 6", "Commonly Associated Term 7", "Commonly Associated Term 8"
+3. Optionally: Enrich with additional associated terms where appropriate
+4. Save the updated files with 22 columns
+5. Report completion for each file
 
-## 7. <instructions> Workflow 4: Merging Letter Files </instructions>
+---
+
+## <instructions> Workflow 4: Final Database Merge </instructions>
+
 This workflow consolidates all individual letter CSV files into the master database.
 When I ask you to "merge the letters" or "consolidate the database," you must:
-1.  Read all `[A-Z].csv` files in alphabetical order (e.g., `B.csv`, `C.csv`, `D.csv`).
-2.  Verify all files have 22 columns before merging
-3.  Combine all rows (preserving headers from the first file only).
-4.  Save the consolidated data to `neuro_terms.csv`.
-5.  Report how many terms were merged from each letter.
+1. Read all `[A-Z].csv` files in alphabetical order (e.g., `B.csv`, `C.csv`, `D.csv`).
+2. Verify all files have 22 columns before merging
+3. Combine all rows (preserving headers from the first file only).
+4. Save the consolidated data to `neuro_terms.csv`.
+5. Report how many terms were merged from each letter.
 
-## 8. <instructions> Workflow 5: Generating JSON Output </instructions>
+---
+
+## <instructions> Workflow 5: Generating JSON Output </instructions>
+
 This is the final export step. When I ask you to "generate the JSON," you must:
-1.  Read the entire `neuro_terms.csv` file.
-2.  Convert all rows into a valid JSON array.
-3.  Save the result, overwriting the `neuro_terms.json` file.
+1. Read the entire `neuro_terms.csv` file.
+2. Convert all rows into a valid JSON array.
+3. Save the result, overwriting the `neuro_terms.json` file.
+
+---
+
+## ClaudeKit Integration
+
+This project uses ClaudeKit framework for AI-powered development orchestration. Available specialized agents:
+
+### Domain-Specific Agents (Project-Critical)
+- **mesh-validator** - Validates MeSH terms against NIH API (REQUIRED for neuroscience data)
+- **neuro-reviewer** - Reviews neuroscience terminology data using Gemini CLI (REQUIRED for neuroscience data)
+
+### General Development Agents
+- **planner** - Creates implementation plans for new features
+- **researcher** - Conducts parallel research on technical topics
+- **tester** - Runs tests and generates reports
+- **debugger** - Analyzes logs and error reports
+- **code-reviewer** - Reviews code quality and standards
+- **docs-manager** - Updates project documentation
+- **git-manager** - Manages version control workflows
+- **project-manager** - Tracks progress and milestones
+
+### Agent Orchestration Principles
+- Use **parallel execution** for independent tasks (e.g., mesh-validator + neuro-reviewer)
+- Use **sequential chaining** for dependent tasks
+- Communicate between agents via markdown reports in `./plans/reports/`
+- Follow agent-specific expertise for task delegation
+
+---
+
+## Documentation Management
+
+We keep all important docs in `./docs` folder and keep updating them:
+
+```
+./docs
+├── project-overview-pdr.md
+├── code-standards.md
+├── codebase-summary.md
+└── RELEASE.md
+```
+
+---
+
+## Best Practices
+
+### Development Principles
+- **YANGI**: You Aren't Gonna Need It - avoid over-engineering
+- **KISS**: Keep It Simple, Stupid - prefer simple solutions
+- **DRY**: Don't Repeat Yourself - eliminate code duplication
+
+### Data Quality
+- All data goes through dual validation (mesh-validator + neuro-reviewer)
+- MeSH terms MUST be API-verified
+- Accuracy over completeness for all fields
+- Comprehensive validation logging in MeshValidation/
+
+### Git Workflow
+- Clean, conventional commit messages
+- Professional git history
+- No AI attribution in commits
+- Focused, atomic commits
+
+---
+
+## Important Notes
+
+- Only create files when absolutely necessary
+- ALWAYS prefer editing existing files to creating new ones
+- Never fabricate data - leave fields empty if information is unavailable
+- Follow the exact 22-column schema for all new letter files (G-Z)
+- Run both validation agents in parallel for efficiency
+- Document all MeSH corrections in tracking files

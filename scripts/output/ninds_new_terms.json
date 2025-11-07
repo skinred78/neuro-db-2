@@ -1,0 +1,260 @@
+{
+  "summary": {
+    "total_ninds_terms": 76,
+    "existing_database_terms": 515,
+    "new_terms": 54,
+    "overlapping_terms": 22
+  },
+  "new_terms_by_letter": {
+    "A": [
+      {
+        "term": "Anemia",
+        "definition": "Anemia is a condition in which a person’s blood does not produce enough healthy red blood cells which provide oxygen to body tissues. This can cause weakness and fatigue."
+      },
+      {
+        "term": "Apraxia",
+        "definition": "Apraxia is the loss of the ability to perform skilled movements and gestures. For example, a person may no longer be able to wink, lick their lips, or complete the steps required to bathe or dress themselves."
+      },
+      {
+        "term": "Atrial Fibrillation",
+        "definition": "Atrial fibrillation is a rapid, irregular, weak beating of the left atrium or upper chamber of the heart. It can cause blood clots and is a major risk factor for ischemic stroke."
+      },
+      {
+        "term": "Atrophy",
+        "definition": "Atrophy is the process of wasting away or deteriorating in cells, tissues, and organs."
+      },
+      {
+        "term": "Autosomal Recessive Disorders",
+        "definition": "Autosomal recessive disorders refers to disorders in which means both parents carry and pass on a copy of a defective gene to the affected person."
+      }
+    ],
+    "B": [
+      {
+        "term": "Biomarkers",
+        "definition": "Biomarker is a term used to refer to biological signs of disease found in blood, body fluids, and tissues. Biomarkers can help indicate risk of a disease, aid in diagnosis, and track progression."
+      },
+      {
+        "term": "Blood-brain barrier",
+        "definition": "The blood-brain barrier is a layer of tightly-packed cells that control the movement of substances between the blood and the fluid that surrounds the brain’s neurons. It filters what goes in and out of the brain, allowing water, oxygen, and some medications to reach the brain. The blood-brain barrier also blocks harmful substances like bacteria, viruses, or other toxins before they reach the brain."
+      }
+    ],
+    "C": [
+      {
+        "term": "Cephalocele",
+        "definition": "Cephalocele is a condition that arises as the brain is developing in which part of the brain and central nervous system protrude outside of the skull."
+      },
+      {
+        "term": "Cerebral",
+        "definition": "A term used to describe the principal part of the brain, the cerebrum."
+      },
+      {
+        "term": "Cerebral Atrophy",
+        "definition": "Cerebral atrophy includes neurons being injured and dying, connections between networks of neurons breaking down, and the gradual shrinking of brain regions."
+      },
+      {
+        "term": "Cerebral Hypoxia",
+        "definition": "Cerebral hypoxia is a condition in which the brain doesn’t get enough oxygen to function normally, even though blood flow is normal."
+      },
+      {
+        "term": "Chorea",
+        "definition": "Chorea is a movement disorder that causes sudden, unintended, and uncontrollable jerky movements of the muscles in the face, arms, or legs. It is a symptom of many conditions and diseases and is caused by overactivity of the chemical dopamine in the brain."
+      },
+      {
+        "term": "Clonus",
+        "definition": "Clonus is a reflex response that includes involuntary and rhythmic muscle contractions. It is seen in some neurological conditions."
+      },
+      {
+        "term": "Coma",
+        "definition": "A coma is a long, deep state of unconsciousness. People in a state of coma are alive but unable to move or respond to their surroundings."
+      },
+      {
+        "term": "Contracture",
+        "definition": "A contracture describes a shortening or tightening of the muscles or tendons around a person's joints. It usually results in a decreased range of motion in the joint."
+      }
+    ],
+    "D": [
+      {
+        "term": "Dendrites",
+        "definition": "Dendrites are the part of the neuron that receive signals from other nerve cells."
+      },
+      {
+        "term": "Dysautonomia",
+        "definition": "Dysautonomia happens when there is a problem in the autonomic nervous system, which controls involuntary functions like breathing, heartbeat, and blood pressure which normally happen without thinking."
+      },
+      {
+        "term": "Dysgraphia",
+        "definition": "Dysgraphia is a term used to describe a variety of challenges and disabilities related to writing."
+      },
+      {
+        "term": "Dysphagia",
+        "definition": "Dysphagia is the medical term for difficulty swallowing."
+      },
+      {
+        "term": "Dystonia",
+        "definition": "Dystonia is a medical term for involuntary muscle contractions or flexing. It can cause slow repetitive movements or abnormal postures that can be painful."
+      }
+    ],
+    "E": [
+      {
+        "term": "Encephalitis",
+        "definition": "Encephalitis is inflammation of the brain."
+      },
+      {
+        "term": "Encephalopathy",
+        "definition": "Encephalopathy is a decrease in blood flow or oxygen to the brain."
+      },
+      {
+        "term": "Enzymes",
+        "definition": "Enzymes are proteins that help speed up chemical reactions in the body (called metabolism)."
+      }
+    ],
+    "F": [
+      {
+        "term": "Fasciculations",
+        "definition": "Fasciculations is the medical term for twitching muscles."
+      },
+      {
+        "term": "Fibromuscular dysplasia (FMD)",
+        "definition": "The abnormal development or growth of cells in the walls of arteries that can cause the vessels to narrow or bulge."
+      }
+    ],
+    "H": [
+      {
+        "term": "Hydromyelia",
+        "definition": "Hydromyelia is an abnormal widening of the spinal cord’s central canal in which cerebrospinal fluid can build up and damage nerve cells and their connections."
+      },
+      {
+        "term": "Hypersomnia",
+        "definition": "Hypersomnia is a medical term for excessive tiredness or sleepiness. It is different from feeling tired from lack of sleep at night and can result from an injury or problem in the brain."
+      },
+      {
+        "term": "Hypertonia",
+        "definition": "Hypertonia is a medical term for too much muscle tone. It can make arms or legs stiff and difficult to move and often happens when part of the brain or spinal cord is damaged."
+      },
+      {
+        "term": "Hypotonia",
+        "definition": "Hypotonia is a medical term for decreased muscle tone and can happen when the brain, spinal cord, nerves, or muscles are damaged."
+      }
+    ],
+    "I": [
+      {
+        "term": "Immunoglobulins",
+        "definition": "Immunoglobulins are natural antibodies produced by the immune system."
+      },
+      {
+        "term": "Inflammation",
+        "definition": "Inflammation is a condition in which tissues, organs, or other parts of the body become swollen, hot, or painful. Inflammation can be a reaction to an infection or injury. Inflammation in the brain or spinal cord can cause other problems."
+      },
+      {
+        "term": "Intravenous immunoglobulin",
+        "definition": "Intravenous immunoglobulin (IVIg) is a common treatment for peripheral neuropathy caused by autoantibodies."
+      }
+    ],
+    "L": [
+      {
+        "term": "Learning Disabilities",
+        "definition": "Learning disabilities are disorders that affect a person’s ability to understand, or use spoken or written language, do mathematical calculations, coordinate movements, or direct attention. Learning disabilities occur in very young children but may not be identified until the child reaches school age. The most common treatment is special education and assistive devices."
+      },
+      {
+        "term": "Lipidoses",
+        "definition": "Lipidoses (also known as lipid storage disease or disorders) are a group of inherited metabolic disorders in which harmful amounts of lipids build up in the body."
+      },
+      {
+        "term": "Lipids",
+        "definition": "Lipids are fatty materials in the body that include oils, fatty acids, waxes, and steroids (such as cholesterol and estrogen). They make up part of the cell membranes that help control what enters and leaves cells and help with storing energy, absorbing vitamins, and making hormones."
+      }
+    ],
+    "M": [
+      {
+        "term": "Metabolism",
+        "definition": "Metabolism is the process by which the body processes food and other substances into a form that can be used to create energy. In the metabolic process, a substance can be broken down, absorbed, and used."
+      },
+      {
+        "term": "Multi-infarct Dementia",
+        "definition": "Multi-infarct dementia is a common cause of memory loss in older people and is caused by multiple strokes which damage brain tissue."
+      },
+      {
+        "term": "Myelin Sheath",
+        "definition": "The myelin sheath is the insulating layer surrounding the axon, the message sender of the nerve cell."
+      },
+      {
+        "term": "Myelitis",
+        "definition": "Myelitis is an inflammation of the spinal cord. It can damage the myelin that covers the fibers of the nerve cell."
+      },
+      {
+        "term": "Myotonia",
+        "definition": "Myotonia is an impairment in a person’s ability to relax a muscle or group of muscles."
+      }
+    ],
+    "N": [
+      {
+        "term": "Nervous System",
+        "definition": "The nervous system includes the brain, spinal cord, and nerves throughout the body. It sends messages to and from the brain to the rest of the body."
+      },
+      {
+        "term": "Neuropathy",
+        "definition": "Neuropathy is an umbrella term that refers to damage or disease in the nerves, which can numbness or weakness."
+      },
+      {
+        "term": "Neurosarcoidosis",
+        "definition": "Neurosarcoidosis is a chronic inflammatory disorder in the nervous system. Sarcoidosis primarily affects the lungs but can impact almost every other organ and system in the body."
+      },
+      {
+        "term": "Neurotoxicity",
+        "definition": "Neurotoxicity happens when exposure to toxic substances affects the normal activity of the nervous system."
+      }
+    ],
+    "O": [
+      {
+        "term": "Orthostatic Hypotension",
+        "definition": "Orthostatic hypotension is a medical term that refers to a sudden drop in blood pressure when a person stands up."
+      }
+    ],
+    "P": [
+      {
+        "term": "Paresthesia",
+        "definition": "Paresthesia refers to a burning, itching, tingling, or prickling sensation that is usually felt in the hands, arms, legs, or feet."
+      },
+      {
+        "term": "Pinched Nerve",
+        "definition": "A pinched nerve is an informal term and not a true medical term. It is used to describe one type of damage or injury to a nerve or set of nerves. The injury may result from compression, constriction, or stretching."
+      },
+      {
+        "term": "Plasmapheresis",
+        "definition": "Plasmapheresis is a procedure in which blood is removed, immune system cells and antibodies are taken out, and the blood is separated into plasma and blood cells. The blood is then returned to the body."
+      },
+      {
+        "term": "Platelets",
+        "definition": "Platelets are cell fragments in the blood that form clots to stop or prevent bleeding."
+      }
+    ],
+    "R": [
+      {
+        "term": "Rigidity",
+        "definition": "Rigidity is the medical term for involuntary muscle stiffness. It’s a form of hypertonia."
+      }
+    ],
+    "S": [
+      {
+        "term": "Syncope",
+        "definition": "Syncope is a medical term for fainting or “passing out,” wherein a person becomes unconscious, goes limp, and quickly recovers."
+      }
+    ],
+    "T": [
+      {
+        "term": "Transcutaneous Electrical Nerve Stimulation",
+        "definition": "Transcutaneous electrical nerve stimulation (TENS) is a noninvasive intervention which involves attaching electrodes to the skin at the site of pain or near associated nerves and administering a gentle electrical current."
+      },
+      {
+        "term": "Tremor",
+        "definition": "Tremor is a medical term for shaking in the hands, arms, legs, vocal cords, or other parts of the body."
+      }
+    ],
+    "W": [
+      {
+        "term": "Whiplash",
+        "definition": "Whiplash, also called neck sprain or neck strain, is a soft tissue injury to the neck, usually caused by sudden, fast movement."
+      }
+    ]
+  }
+}
