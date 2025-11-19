@@ -6,7 +6,26 @@ Your role is to manage the Neuroscience Terminology Database project, analyze re
 
 ## Project Overview
 
-This project is a neuroscience terminology database. The primary objective is to populate this database with terms from B-Z, following strict, multi-step validation processes to ensure data accuracy and completeness.
+This project is a neuroscience terminology database. All terms from A-Z have been collected and validated following strict, multi-step validation processes to ensure data accuracy and completeness.
+
+**Database Status**: ✅ Complete (~595 terms across 26 letters, all using 22-column schema)
+
+### Integration with Lex Stream
+
+**Purpose**: This database powers the **[Lex Stream](../Lex-stream-2)** query expansion pipeline.
+
+**Data Flow**:
+```
+NeuroDB-2 (ingestion, enrichment, validation)
+    ↓ export via convert_to_lexstream.py
+neuro_terms.json → Lex Stream (agents: spell checker, abbreviation expander, synonym finder, MeSH detector)
+```
+
+**Integration Status**: ✅ Production-ready (95% test pass rate)
+**Integration Report**: `LEXSTREAM_INTEGRATION_REPORT.md`
+**Lex Stream Documentation**: [CLAUDE.md](../Lex-stream-2/CLAUDE.md), [README.md](../Lex-stream-2/README.md)
+
+**Current Priority**: Implementing MeSH hierarchy trees (neuroscientist feedback in Lex Stream: `docs/analysis/20251117-neuroscientist-feedback-expansion-trees.md`)
 
 ## Workflows
 
@@ -62,13 +81,15 @@ The CSV file MUST contain these exact columns:
 
 **Total columns: 22** (expanded from 19 to accommodate more associated terms)
 
-**Note on existing files (B-F):** Letters B through F were created with 19 columns (5 associated terms). These will be backfilled with 3 additional columns after all letters are complete. New letters (G-Z) use the full 22-column schema.
+**Note**: All letter files (A-Z) now use the complete 22-column schema.
 
 ---
 
 ## <instructions> Workflow 1: Adding New Terms </instructions>
 
-You MUST follow this 5-step process for every new letter (B-Z).
+**Status**: ✅ All letters A-Z completed. This workflow is preserved for reference and future term additions.
+
+This is the 5-step process used for collecting terms:
 
 <step_1>
   **Task:** Ingest Core Data
@@ -91,7 +112,7 @@ You MUST follow this 5-step process for every new letter (B-Z).
   **Task:** Automated Data Quality Review
   **Action:** Invoke BOTH validation agents to validate the CSV data.
   **Process:**
-  - First, validate CSV structure locally using Python/bash (verify exactly 22 columns per row for new letters G-Z)
+  - First, validate CSV structure locally using Python/bash (verify exactly 22 columns per row)
   - Write the CSV data to a temporary file using Python's csv module (ensures proper quoting)
   - **Launch TWO agents in parallel** (use single message with multiple Task tool calls):
 
@@ -150,20 +171,7 @@ When I ask you to "merge the letters" or "consolidate the database," you must:
 
 ---
 
-## <instructions> Workflow 3: Backfilling B-F Files </instructions>
-
-After completing letters G-Z with the 22-column schema, backfill the earlier files (B-F) which have 19 columns.
-
-When I ask you to "backfill B-F" or "add columns to B-F," you must:
-1. Read each file (B.csv, C.csv, D.csv, E.csv, F.csv)
-2. Add 3 empty columns: "Commonly Associated Term 6", "Commonly Associated Term 7", "Commonly Associated Term 8"
-3. Optionally: Enrich with additional associated terms where appropriate
-4. Save the updated files with 22 columns
-5. Report completion for each file
-
----
-
-## <instructions> Workflow 4: Final Database Merge </instructions>
+## <instructions> Workflow 3: Final Database Merge </instructions>
 
 This workflow consolidates all individual letter CSV files into the master database.
 When I ask you to "merge the letters" or "consolidate the database," you must:
@@ -175,7 +183,7 @@ When I ask you to "merge the letters" or "consolidate the database," you must:
 
 ---
 
-## <instructions> Workflow 5: Generating JSON Output </instructions>
+## <instructions> Workflow 4: Generating JSON Output </instructions>
 
 This is the final export step. When I ask you to "generate the JSON," you must:
 1. Read the entire `neuro_terms.csv` file.
@@ -250,6 +258,6 @@ We keep all important docs in `./docs` folder and keep updating them:
 - Only create files when absolutely necessary
 - ALWAYS prefer editing existing files to creating new ones
 - Never fabricate data - leave fields empty if information is unavailable
-- Follow the exact 22-column schema for all new letter files (G-Z)
+- All letter files use the exact 22-column schema
 - Run both validation agents in parallel for efficiency
 - Document all MeSH corrections in tracking files
