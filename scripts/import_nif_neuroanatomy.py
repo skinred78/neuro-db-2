@@ -218,9 +218,11 @@ def map_nif_to_neurodb_schema(nif_terms):
         if abbrevs:
             row['Abbreviation'] = abbrevs[0]
 
-        # Associated terms (max 8)
-        for i, related in enumerate(term['related_terms'][:8]):
-            row[f'Commonly Associated Term {i+1}'] = related
+        # Associated terms: SKIP for NIF
+        # Rationale: NIF provides RDF hierarchy (broader/narrower) which are
+        # generic taxonomy terms ("Regional part of brain"), not domain associations.
+        # UMLS will provide domain-specific associated terms during merge.
+        # Decision: DEC-001 (Option A) - docs/decisions/2025-11-19-nif-associated-terms-decision.md
 
         # Add source metadata
         add_source_metadata(row, 'nif')

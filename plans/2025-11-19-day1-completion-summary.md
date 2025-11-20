@@ -103,6 +103,13 @@ Created three reusable library modules in `scripts/lib/`:
 - Solution: Installed rdflib, implemented flexible predicate matching
 - Result: Successfully extracted labels, definitions, synonyms, relationships
 
+**Challenge 5: Generic Associated Terms** (DEC-001)
+- Problem: RDF hierarchy relationships ("broader/narrower") populated associated terms with generic taxonomy ("Regional part of brain" appeared 593 times)
+- Decision: Skip associated terms for NIF import (Option A)
+- Rationale: NIF's strength is structure names; UMLS will provide domain-specific associations
+- Result: All 1,636 terms have empty associated fields; awaiting UMLS merge
+- Documented: `docs/decisions/2025-11-19-nif-associated-terms-decision.md`
+
 ---
 
 ## Files Created
@@ -122,6 +129,8 @@ Created three reusable library modules in `scripts/lib/`:
 ### Documentation
 7. `/Users/sam/NeuroDB-2/plans/2025-11-19-day1-neuronames-importer.md` (implementation plan)
 8. `/Users/sam/NeuroDB-2/plans/2025-11-19-day1-completion-summary.md` (this file)
+9. `/Users/sam/NeuroDB-2/docs/decisions/2025-11-19-nif-associated-terms-decision.md` (DEC-001)
+10. `/Users/sam/NeuroDB-2/docs/decisions/ontology-import-tracker.md` (decision tracking system)
 
 ---
 
@@ -240,6 +249,8 @@ Total Rows: 1636
 3. **Duplicate Handling**: Case-insensitive deduplication essential for quality
 4. **Infrastructure First**: Reusable libraries enable faster subsequent importers
 5. **Validation Early**: Structural validation catches issues before downstream processing
+6. **Decision Documentation**: Track trade-offs and decisions in dedicated docs (DEC-001 saved 90+ min of merge complexity)
+7. **Data Profiling**: Analyze sample data before full import to identify issues early (found generic taxonomy problem during review)
 
 ---
 
