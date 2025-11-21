@@ -1,0 +1,114 @@
+{
+  "total_cuis_filtered": 1015068,
+  "semantic_type_counts": {
+    "Amino Acid, Peptide, or Protein": 166936,
+    "Pharmacologic Substance": 194736,
+    "Enzyme": 32542,
+    "Biologically Active Substance": 79079,
+    "Hormone": 4332,
+    "Nucleic Acid, Nucleoside, or Nucleotide": 15921,
+    "Tissue": 7519,
+    "Body Location or Region": 27069,
+    "Neoplastic Process": 50244,
+    "Body Part, Organ, or Organ Component": 94429,
+    "Disease or Syndrome": 125399,
+    "Injury or Poisoning": 117688,
+    "Pathologic Function": 29628,
+    "Mental Process": 1644,
+    "Cell": 6363,
+    "Organism Function": 5515,
+    "Organ or Tissue Function": 4997,
+    "Social Behavior": 1340,
+    "Molecular Function": 32705,
+    "Behavior": 82,
+    "Physiologic Function": 2528,
+    "Body Space or Junction": 10375,
+    "Cell Component": 8346,
+    "Cell Function": 18986,
+    "Receptor": 5709,
+    "Mental or Behavioral Dysfunction": 10006,
+    "Gene or Genome": 89124,
+    "Cell or Molecular Dysfunction": 5486
+  },
+  "top_10_semantic_types": [
+    [
+      "Pharmacologic Substance",
+      194736
+    ],
+    [
+      "Amino Acid, Peptide, or Protein",
+      166936
+    ],
+    [
+      "Disease or Syndrome",
+      125399
+    ],
+    [
+      "Injury or Poisoning",
+      117688
+    ],
+    [
+      "Body Part, Organ, or Organ Component",
+      94429
+    ],
+    [
+      "Gene or Genome",
+      89124
+    ],
+    [
+      "Biologically Active Substance",
+      79079
+    ],
+    [
+      "Neoplastic Process",
+      50244
+    ],
+    [
+      "Molecular Function",
+      32705
+    ],
+    [
+      "Enzyme",
+      32542
+    ]
+  ],
+  "filter_config": {
+    "priority_1_types": [
+      "T023",
+      "T029",
+      "T030",
+      "T025",
+      "T026",
+      "T024",
+      "T039",
+      "T040",
+      "T042",
+      "T043",
+      "T044",
+      "T041",
+      "T048",
+      "T047",
+      "T046",
+      "T049",
+      "T191",
+      "T037",
+      "T192"
+    ],
+    "priority_2_types": [
+      "T053",
+      "T054",
+      "T121",
+      "T116",
+      "T123",
+      "T125",
+      "T114",
+      "T126",
+      "T028"
+    ],
+    "priority_3_types": [
+      "T129",
+      "T060",
+      "T061"
+    ]
+  }
+}

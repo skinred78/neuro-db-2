@@ -33,3 +33,10 @@ node_modules/
 dist/
 build/
 .next/
+
+# Large source data files (do not commit)
+downloads/
+
+# Large intermediate files (processing artifacts)
+imports/umls/umls_associations.json
+imports/umls/umls_concepts_intermediate.json

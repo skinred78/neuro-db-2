@@ -10,8 +10,6 @@ related_docs:
   - docs/analysis/2025-11-19-lex-stream-integration-compatibility-report.md
 ---
 
-# Scalable Ontology Ingestion with Selective Source Control
-
 ## Executive Summary
 
 **Goal**: Scale NeuroDB-2 from 595 to 100K+ terms using automated bulk import from 4 ontologies, add source tagging for quality optimization, enable runtime filtering in Lex Stream.
@@ -23,6 +21,7 @@ related_docs:
 **Key Constraint**: Maintain 22-column CSV → JSON schema (Lex Stream compatibility).
 
 **Success Metrics**:
+
 - Database size: 595 → 100K+ terms
 - Lex Stream deployment: automated (zero downtime)
 - Quality: 90%+ pass rate on tiered validation
@@ -180,12 +179,14 @@ def get_source_tag(source_abbrev):
 **Rationale**: Maintains Lex Stream compatibility while enabling source tracking.
 
 **New columns** (appended after column 22):
+
 - `Source` - Primary source identifier (umls/neuronames/nif/go/wikipedia/ninds)
 - `Source Priority` - Integer ranking (1=highest)
 - `Contributing Sources` - Comma-separated list of all sources that provided data for this term
 - `Date Added` - ISO timestamp
 
 **File format example**:
+
 ```csv
 Term,Term Two,Definition,...,Commonly Associated Term 8,Source,Source Priority,Contributing Sources,Date Added
 Parkinson disease,,A chronic progressive...,treatment,umls,1,"umls,wikipedia",2025-11-20T10:30:00Z
@@ -196,8 +197,10 @@ Parkinson disease,,A chronic progressive...,treatment,umls,1,"umls,wikipedia",20
 **File**: `scripts/merge_sources.py` (NEW)
 
 **Algorithm**:
+
 1. Group terms by lowercase key (case-insensitive matching)
 2. For overlapping terms:
+
    - Use HIGHEST priority source for `Definition` field
    - Merge ALL `Synonyms` from all sources (deduplicate)
    - Use HIGHEST priority source for `MeSH term`
@@ -206,6 +209,7 @@ Parkinson disease,,A chronic progressive...,treatment,umls,1,"umls,wikipedia",20
 3. For unique terms: preserve as-is with single source tag
 
 **Conflict resolution**:
+
 - Definition conflicts → Use highest priority source
 - MeSH conflicts → Use highest priority source (UMLS > others)
 - Synonym conflicts → Merge all, deduplicate exact matches
@@ -224,6 +228,7 @@ Parkinson disease,,A chronic progressive...,treatment,umls,1,"umls,wikipedia",20
 **Input**: UMLS 2024AB RRF files (downloaded separately)
 
 **UMLS Files Required**:
+
 - `MRCONSO.RRF` - Concept names and sources (~15M rows)
 - `MRDEF.RRF` - Definitions
 - `MRREL.RRF` - Relationships (for associated terms)
@@ -232,6 +237,7 @@ Parkinson disease,,A chronic progressive...,treatment,umls,1,"umls,wikipedia",20
 **Neuroscience Filtering Strategy**:
 
 Option A: **MeSH Tree Code Filtering** (Conservative)
+
 ```python
 # MeSH tree codes for neuroscience
 NEURO_MESH_TREES = [
@@ -243,9 +249,11 @@ NEURO_MESH_TREES = [
     'G11',      # Nervous System Physiological Phenomena
 ]
 ```
+
 Expected output: ~50K-100K terms
 
 Option B: **Semantic Type Filtering** (Aggressive)
+
 ```python
 # UMLS semantic types for neuroscience
 NEURO_SEMANTIC_TYPES = [
@@ -257,6 +265,7 @@ NEURO_SEMANTIC_TYPES = [
     # ... more
 ]
 ```
+
 Expected output: ~200K-500K terms
 
 **Recommendation**: Start with Option A (conservative), expand to Option B if coverage insufficient.
@@ -978,6 +987,7 @@ if __name__ == '__main__':
 **File**: `scripts/validate_structure.py` (MODIFIED from existing)
 
 **Checks**:
+
 - Exactly 26 columns (22 schema + 4 source metadata)
 - `Term` field non-empty
 - No duplicate terms
@@ -1054,6 +1064,7 @@ if __name__ == '__main__':
 **File**: `scripts/validate_sample_mesh.py` (NEW)
 
 **Process**:
+
 1. Random sample 10% of terms (~10K terms)
 2. Run mesh-validator agent on sample
 3. Calculate pass rate
@@ -1114,6 +1125,7 @@ if __name__ == '__main__':
 **File**: `scripts/validate_benchmark_terms.py` (NEW)
 
 **Benchmark terms** (from James's feedback):
+
 - Neuromodulation-related: TMS, DBS, tDCS, VNS
 - MS-related: multiple sclerosis, relapsing-remitting MS, EDSS
 - Alzheimer's-related: Alzheimer's disease, amyloid beta, tau protein
@@ -1131,6 +1143,7 @@ if __name__ == '__main__':
 **File**: `convert_to_lexstream.py` (MODIFIED)
 
 **Changes**:
+
 1. Add source metadata to JSON output
 2. Handle new 26-column CSV format
 3. Generate versioned output filename
@@ -1256,28 +1269,30 @@ def build_mesh_map(terms_dict):
 
 **Configurations to test**:
 
-| Config | Sources | Expected Terms | Purpose |
-|--------|---------|----------------|---------|
-| baseline | wikipedia,ninds | 595 | Current production baseline |
-| umls-only | umls | ~100K | Test UMLS quality alone |
-| umls-neuronames | umls,neuronames | ~103K | Primary deployment target |
-| all-sources | umls,neuronames,nif,go,wikipedia,ninds | ~130K+ | Maximum coverage |
+| Config          | Sources                                | Expected Terms | Purpose                     |
+| --------------- | -------------------------------------- | -------------- | --------------------------- |
+| baseline        | wikipedia,ninds                        | 595            | Current production baseline |
+| umls-only       | umls                                   | ~100K          | Test UMLS quality alone     |
+| umls-neuronames | umls,neuronames                        | ~103K          | Primary deployment target   |
+| all-sources     | umls,neuronames,nif,go,wikipedia,ninds | ~130K+         | Maximum coverage            |
 
 **Benchmark queries** (from James):
 
 1. **Neuromodulation for MS**:
+
    - Include: neuromodulation, multiple sclerosis
    - Exclude: animal studies
+1. **Alzheimer's treatment**:
 
-2. **Alzheimer's treatment**:
    - Include: Alzheimer's disease, treatment, clinical trial
    - Exclude: review articles
+1. **Stroke rehabilitation**:
 
-3. **Stroke rehabilitation**:
    - Include: stroke, rehabilitation, motor recovery
    - Exclude: case reports
 
 **Metrics to track**:
+
 - Synonyms added per query
 - MeSH terms detected
 - Query complexity (number of terms in final query)
@@ -1370,6 +1385,7 @@ if __name__ == '__main__':
 **Output**: Markdown report comparing baseline vs new configurations
 
 **Metrics**:
+
 - Database size (terms, abbreviations, MeSH coverage)
 - Synonyms per term (avg, median, max)
 - Definition completeness (% with definitions)
@@ -1385,6 +1401,7 @@ if __name__ == '__main__':
 **Process** (already automated via GitHub Actions):
 
 1. **Local validation** (NeuroDB-2):
+
    ```bash
    cd /Users/sam/NeuroDB-2
 
@@ -1401,14 +1418,14 @@ if __name__ == '__main__':
    python validate_lexstream_db.py
    python test_lexstream_db.py
    ```
+1. **Copy to Lex Stream** (manual step):
 
-2. **Copy to Lex Stream** (manual step):
    ```bash
    cp /Users/sam/NeuroDB-2/neuro_terms_v3.0.0_*.json \
       /Users/sam/Lex-stream-2/neuro_terms.json
    ```
+1. **Local Lex Stream testing**:
 
-3. **Local Lex Stream testing**:
    ```bash
    cd /Users/sam/Lex-stream-2
 
@@ -1417,8 +1434,8 @@ if __name__ == '__main__':
    # Verify /api/terms endpoint
    # Test benchmark queries
    ```
+1. **Staging deployment** (automated):
 
-4. **Staging deployment** (automated):
    ```bash
    cd /Users/sam/Lex-stream-2
 
@@ -1431,19 +1448,19 @@ if __name__ == '__main__':
    # - Deploys to Cloud Run staging
    # - Runs health checks
    ```
+1. **Staging verification**:
 
-5. **Staging verification**:
    - Test /api/terms endpoint (check metadata)
    - Run benchmark queries
    - Verify performance (load time < 5s)
    - Check logs for errors
+1. **Production deployment** (automated, same commit):
 
-6. **Production deployment** (automated, same commit):
    - GitHub Actions auto-deploys to production
    - Monitor logs
    - Verify health endpoint
+1. **Rollback plan** (if issues):
 
-7. **Rollback plan** (if issues):
    ```bash
    git revert HEAD
    git push origin main
@@ -1455,11 +1472,13 @@ if __name__ == '__main__':
 **Large JSON file handling** (~60-90 MB estimated):
 
 **Backend optimization** (already implemented):
+
 - Global cache in `terms_loader.py` (loads once at startup)
 - Expected load time: 2-5 seconds (one-time cost)
 - Memory footprint: ~150-250 MB (acceptable)
 
 **Monitoring**:
+
 - Check Cloud Run memory usage
 - Monitor startup time
 - Verify cache hit rates (Redis)
@@ -1509,81 +1528,87 @@ if __name__ == '__main__':
 ## Implementation Timeline (Nov 20-25)
 
 ### Day 1 (Nov 20): Infrastructure + Neuronames
+
 **Hours: 8**
 
-| Time | Task | Duration | Output |
-|------|------|----------|--------|
-| 09:00-10:00 | Create schemas/source_metadata.py | 1h | Source tagging system |
-| 10:00-12:00 | Implement neuronames_import.py | 2h | Neuronames importer |
-| 12:00-13:00 | Lunch | 1h | - |
-| 13:00-14:00 | Run Neuronames import | 1h | ~3K terms added |
-| 14:00-17:00 | Implement merge_sources.py | 3h | Merge algorithm |
+| Time        | Task                              | Duration | Output                |
+| ----------- | --------------------------------- | -------- | --------------------- |
+| 09:00-10:00 | Create schemas/source_metadata.py | 1h       | Source tagging system |
+| 10:00-12:00 | Implement neuronames_import.py    | 2h       | Neuronames importer   |
+| 12:00-13:00 | Lunch                             | 1h       | -                     |
+| 13:00-14:00 | Run Neuronames import             | 1h       | ~3K terms added       |
+| 14:00-17:00 | Implement merge_sources.py        | 3h       | Merge algorithm       |
 
 **Deliverable**: Neuronames data imported, merge system ready
 
 ### Day 2 (Nov 21): UMLS Import
+
 **Hours: 10**
 
-| Time | Task | Duration | Output |
-|------|------|----------|--------|
-| 09:00-12:00 | Implement umls_import.py | 3h | UMLS parser |
-| 12:00-13:00 | Lunch | 1h | - |
-| 13:00-15:00 | Download UMLS 2024AB (if not done) | 2h | UMLS RRF files |
-| 15:00-19:00 | Run UMLS import | 4h | ~100K terms added |
+| Time        | Task                               | Duration | Output            |
+| ----------- | ---------------------------------- | -------- | ----------------- |
+| 09:00-12:00 | Implement umls_import.py           | 3h       | UMLS parser       |
+| 12:00-13:00 | Lunch                              | 1h       | -                 |
+| 13:00-15:00 | Download UMLS 2024AB (if not done) | 2h       | UMLS RRF files    |
+| 15:00-19:00 | Run UMLS import                    | 4h       | ~100K terms added |
 
 **Deliverable**: UMLS data imported (~100K terms)
 
 ### Day 3 (Nov 22): NIF + GO + Merge + Validation
+
 **Hours: 10**
 
-| Time | Task | Duration | Output |
-|------|------|----------|--------|
-| 09:00-11:00 | Implement nif_import.py | 2h | NIF parser |
-| 11:00-12:00 | Run NIF import | 1h | ~30K terms added |
-| 12:00-13:00 | Lunch | 1h | - |
-| 13:00-14:30 | Implement go_import.py | 1.5h | GO parser |
-| 14:30-15:00 | Run GO import | 0.5h | ~2K terms added |
-| 15:00-17:00 | Run merge_sources.py | 2h | Consolidated neuro_terms.csv |
-| 17:00-19:00 | Run Tier 1 + Tier 2 validation | 2h | Validation reports |
+| Time        | Task                           | Duration | Output                       |
+| ----------- | ------------------------------ | -------- | ---------------------------- |
+| 09:00-11:00 | Implement nif_import.py        | 2h       | NIF parser                   |
+| 11:00-12:00 | Run NIF import                 | 1h       | ~30K terms added             |
+| 12:00-13:00 | Lunch                          | 1h       | -                            |
+| 13:00-14:30 | Implement go_import.py         | 1.5h     | GO parser                    |
+| 14:30-15:00 | Run GO import                  | 0.5h     | ~2K terms added              |
+| 15:00-17:00 | Run merge_sources.py           | 2h       | Consolidated neuro_terms.csv |
+| 17:00-19:00 | Run Tier 1 + Tier 2 validation | 2h       | Validation reports           |
 
 **Deliverable**: All sources merged, initial validation passed
 
 ### Day 4 (Nov 23): Lex Stream Integration
+
 **Hours: 8**
 
-| Time | Task | Duration | Output |
-|------|------|----------|--------|
-| 09:00-11:00 | Modify convert_to_lexstream.py | 2h | Enhanced converter |
-| 11:00-12:00 | Run conversion | 1h | neuro_terms_v3.0.0_*.json |
-| 12:00-13:00 | Lunch | 1h | - |
-| 13:00-15:00 | Modify Lex Stream (config.py, terms_loader.py) | 2h | Source filtering |
-| 15:00-17:00 | Local testing (Lex Stream) | 2h | Verified locally |
+| Time        | Task                                           | Duration | Output                    |
+| ----------- | ---------------------------------------------- | -------- | ------------------------- |
+| 09:00-11:00 | Modify convert_to_lexstream.py                 | 2h       | Enhanced converter        |
+| 11:00-12:00 | Run conversion                                 | 1h       | neuro_terms_v3.0.0_*.json |
+| 12:00-13:00 | Lunch                                          | 1h       | -                         |
+| 13:00-15:00 | Modify Lex Stream (config.py, terms_loader.py) | 2h       | Source filtering          |
+| 15:00-17:00 | Local testing (Lex Stream)                     | 2h       | Verified locally          |
 
 **Deliverable**: Lex Stream compatible JSON, local testing passed
 
 ### Day 5 (Nov 24): Testing + Benchmarking
+
 **Hours: 8**
 
-| Time | Task | Duration | Output |
-|------|------|----------|--------|
-| 09:00-12:00 | Implement test_source_combinations.py | 3h | Testing framework |
-| 12:00-13:00 | Lunch | 1h | - |
-| 13:00-16:00 | Run benchmark tests | 3h | Comparison metrics |
-| 16:00-17:00 | Generate comparison report | 1h | Quality report |
+| Time        | Task                                  | Duration | Output             |
+| ----------- | ------------------------------------- | -------- | ------------------ |
+| 09:00-12:00 | Implement test_source_combinations.py | 3h       | Testing framework  |
+| 12:00-13:00 | Lunch                                 | 1h       | -                  |
+| 13:00-16:00 | Run benchmark tests                   | 3h       | Comparison metrics |
+| 16:00-17:00 | Generate comparison report            | 1h       | Quality report     |
 
 **Deliverable**: Benchmark results, quality metrics
 
 ### Day 6 (Nov 25): Deployment + Demo
+
 **Hours: 6**
 
-| Time | Task | Duration | Output |
-|------|------|----------|--------|
-| 09:00-10:00 | Final validation (Tier 3) | 1h | Benchmark terms validated |
-| 10:00-11:00 | Deploy to staging | 1h | Staging environment live |
-| 11:00-12:00 | Staging verification | 1h | Verified |
-| 12:00-13:00 | Lunch | 1h | - |
-| 13:00-14:00 | Deploy to production | 1h | Production live |
-| 14:00-15:00 | Prepare demo materials | 1h | Demo ready |
+| Time        | Task                      | Duration | Output                    |
+| ----------- | ------------------------- | -------- | ------------------------- |
+| 09:00-10:00 | Final validation (Tier 3) | 1h       | Benchmark terms validated |
+| 10:00-11:00 | Deploy to staging         | 1h       | Staging environment live  |
+| 11:00-12:00 | Staging verification      | 1h       | Verified                  |
+| 12:00-13:00 | Lunch                     | 1h       | -                         |
+| 13:00-14:00 | Deploy to production      | 1h       | Production live           |
+| 14:00-15:00 | Prepare demo materials    | 1h       | Demo ready                |
 
 **Deliverable**: Production deployment, demo materials
 
@@ -1594,6 +1619,7 @@ if __name__ == '__main__':
 ### Validation Tiers
 
 **Tier 1: Structural (100% coverage)**
+
 - Column count (26 columns)
 - Required fields (Term, Source)
 - Encoding (UTF-8)
@@ -1601,11 +1627,13 @@ if __name__ == '__main__':
 - **Pass criteria**: Zero errors
 
 **Tier 2: Sample (10% coverage)**
+
 - Random sample: ~10K terms
 - MeSH validation via mesh-validator
 - **Pass criteria**: ≥95% pass rate
 
 **Tier 3: High-value (Benchmark terms)**
+
 - Full dual validation on critical terms
 - James's benchmark queries
 - **Pass criteria**: 100% pass rate
@@ -1613,6 +1641,7 @@ if __name__ == '__main__':
 ### Performance Testing
 
 **Metrics to track**:
+
 - JSON load time (target: <5s)
 - Memory usage (target: <300 MB)
 - API response time (no degradation vs baseline)
@@ -1621,12 +1650,14 @@ if __name__ == '__main__':
 ### Quality Metrics
 
 **Database quality**:
+
 - Definition completeness: % terms with definitions
 - MeSH coverage: % terms with MeSH mappings
 - Synonym density: avg synonyms per term
 - Source distribution: terms per source
 
 **Query quality** (vs baseline):
+
 - Synonyms added per query
 - MeSH terms detected
 - Query complexity (term count)
@@ -1637,46 +1668,69 @@ if __name__ == '__main__':
 ## Risk Mitigation
 
 ### Risk 1: UMLS License Delays
+
 **Probability**: Low
+
 **Impact**: High
+
 **Mitigation**: Apply for UMLS license immediately (usually instant approval). If delayed, prioritize Neuronames + NIF + GO first.
 
 ### Risk 2: Memory Issues (Large JSON)
+
 **Probability**: Medium
+
 **Impact**: Medium
+
 **Mitigation**:
+
 - Implement pagination if needed
 - Monitor Cloud Run memory usage
 - Consider JSON streaming if >100 MB
 
 ### Risk 3: Empty Fields
+
 **Probability**: High
+
 **Impact**: Low
+
 **Mitigation**:
+
 - Empty fields acceptable per "accuracy over completeness" rule
 - Agents handle empty fields gracefully
 - Fill from lower priority sources when merging
 
 ### Risk 4: MeSH Validation Failures
+
 **Probability**: Medium
+
 **Impact**: Medium
+
 **Mitigation**:
+
 - Use tiered validation (not 100% coverage)
 - Sample-based approach (10% random)
 - Focus validation on benchmark terms
 
 ### Risk 5: Performance Degradation
+
 **Probability**: Low
+
 **Impact**: High
+
 **Mitigation**:
+
 - Load testing before deployment
 - Redis caching already implemented
 - Rollback procedure ready
 
 ### Risk 6: Source Conflicts
+
 **Probability**: High
+
 **Impact**: Low
+
 **Mitigation**:
+
 - Clear priority ranking (UMLS > Neuronames > Wikipedia)
 - Merge algorithm tested on sample data
 - Manual review of conflicts if needed
@@ -1688,16 +1742,19 @@ if __name__ == '__main__':
 ### Quantitative Metrics
 
 **Database size**:
+
 - ✅ Target: 100K+ terms (vs 595 baseline)
 - ✅ MeSH coverage: ≥80%
 - ✅ Definition completeness: ≥70%
 
 **Performance**:
+
 - ✅ JSON load time: <5s
 - ✅ Memory usage: <500 MB
 - ✅ API response time: no degradation
 
 **Validation**:
+
 - ✅ Tier 1: 100% pass rate
 - ✅ Tier 2: ≥95% pass rate
 - ✅ Tier 3: 100% pass rate (benchmark terms)
@@ -1705,16 +1762,19 @@ if __name__ == '__main__':
 ### Qualitative Metrics
 
 **Lex Stream integration**:
+
 - ✅ Zero breaking changes to frontend/backend
 - ✅ Automated deployment successful
 - ✅ No production errors
 
 **Query quality**:
+
 - ✅ More synonyms added per query
 - ✅ Better MeSH coverage
 - ✅ Benchmark queries perform better than baseline
 
 **Usability**:
+
 - ✅ Source filtering works as expected
 - ✅ Documentation updated
 - ✅ Team can test different source combinations
@@ -1727,6 +1787,7 @@ if __name__ == '__main__':
 
 1. **Identify issue** (logs, error messages)
 2. **Revert commit** in Lex Stream repo:
+
    ```bash
    git revert HEAD
    git push origin main
@@ -1750,6 +1811,7 @@ if __name__ == '__main__':
 ### Files to Update
 
 **NeuroDB-2**:
+
 - `CLAUDE.md` - Update workflows, add source control section
 - `README.md` - Add bulk import instructions
 - `CHANGELOG.md` - v3.0.0 release notes
@@ -1757,6 +1819,7 @@ if __name__ == '__main__':
 - `docs/codebase-summary.md` - Update architecture
 
 **Lex Stream**:
+
 - `CLAUDE.md` - Document source filtering feature
 - `README.md` - Update database version
 - `config.py` - Add comments for new env vars
@@ -1767,40 +1830,42 @@ if __name__ == '__main__':
 ## Unresolved Questions
 
 1. **UMLS License**: Do you have UMLS account credentials already? If not, apply immediately at https://uts.nlm.nih.gov/uts/signup-login
+1. **Neuroscience Filtering Strategy**: For UMLS, which filtering approach?
 
-2. **Neuroscience Filtering Strategy**: For UMLS, which filtering approach?
    - Option A: Conservative (MeSH tree codes C10, F01-F03, G11) → ~50K-100K terms
    - Option B: Aggressive (semantic types) → ~200K-500K terms
    - Recommendation: Start with Option A
+1. **Source Priority Adjustments**: Are the proposed rankings correct?
 
-3. **Source Priority Adjustments**: Are the proposed rankings correct?
    - UMLS (1) > Neuronames (2) > Wikipedia/NINDS (3) > NIF (4) > GO (5)
    - Or should Neuronames be higher priority for neuroanatomy terms?
+1. **Performance Threshold**: What is acceptable JSON load time?
 
-4. **Performance Threshold**: What is acceptable JSON load time?
    - Current plan assumes 2-5s is acceptable for 100K terms
    - If stricter requirement, may need pagination or lazy loading
+1. **Quality Bar**: Is 90%+ pass rate on tiered validation acceptable for Nov 25 deadline?
 
-5. **Quality Bar**: Is 90%+ pass rate on tiered validation acceptable for Nov 25 deadline?
    - Or do you require 95%+ before deployment?
+1. **Testing Scope**: Which source combinations should be prioritized for testing?
 
-6. **Testing Scope**: Which source combinations should be prioritized for testing?
    - Baseline vs UMLS-only vs UMLS+Neuronames vs All-sources?
    - Or focus only on UMLS+Neuronames (recommended deployment)?
+1. **Benchmark Queries**: Are the 3 proposed benchmark queries sufficient?
 
-7. **Benchmark Queries**: Are the 3 proposed benchmark queries sufficient?
    - Neuromodulation for MS
    - Alzheimer's treatment
    - Stroke rehabilitation
    - Or do you have specific queries from James?
+1. **Deployment Timing**: What time on Nov 25 is the demo/deadline?
 
-8. **Deployment Timing**: What time on Nov 25 is the demo/deadline?
    - Need to ensure deployment completes with buffer time for verification
 
 ---
 
 **Document Status**: Ready for implementation
+
 **Next Steps**:
+
 1. Answer unresolved questions
 2. Apply for UMLS license (if not done)
 3. Begin Phase 1 implementation (Nov 20)

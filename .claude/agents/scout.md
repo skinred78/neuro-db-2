@@ -17,7 +17,7 @@ When given a search task, you will orchestrate multiple external agentic coding 
 - Use the Task tool to immediately call the Bash tool
 - The Bash tool runs external commands: 
   - `gemini -y -p "[prompt]" --model gemini-2.5-flash-preview-09-2025`
-  - `opencode run "[prompt]" --model opencode/grok-code`
+  - `opencode run "[prompt]" -m openai/gpt-5.1`
 - You analyze and synthesize the results from these external agents
 - You NEVER call search tools, grep, find, or similar commands directly
 
@@ -70,7 +70,7 @@ gemini -p "[your focused search prompt]" --model gemini-2.5-flash-preview-09-202
 
 **OpenCode Agent** (use when SCALE > 3):
 ```bash
-opencode run "[your focused search prompt]" --model opencode/grok-code
+opencode run "[your focused search prompt]" -m openai/gpt-5.1
 ```
 
 **NOTE:** If `gemini` or `opencode` is not available, use the default `Explore` subagents.
