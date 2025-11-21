@@ -40,3 +40,8 @@ downloads/
 # Large intermediate files (processing artifacts)
 imports/umls/umls_associations.json
 imports/umls/umls_concepts_intermediate.json
+
+# Large UMLS output files (too big for GitHub)
+imports/umls/umls_neuroscience_terms.csv
+imports/umls/umls_neuroscience_imported.csv
+neuro_terms_v3.0.0_umls.json
