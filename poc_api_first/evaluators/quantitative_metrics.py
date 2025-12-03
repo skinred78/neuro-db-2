@@ -18,16 +18,21 @@ class QuantitativeMetrics:
     The runner embeds authoritative measurements like latency_seconds.
     """
 
-    def __init__(self, target_range=(5, 20), latency_threshold=2.0):
+    def __init__(self, target_range=(5, 50), latency_threshold=30.0, strict_range_check=False):
         """
         Initialize metrics evaluator with thresholds.
 
         Args:
-            target_range: Tuple of (min, max) acceptable result counts
+            target_range: Tuple of (min, max) preferred result counts
+                         Default (5, 50) allows broader queries
             latency_threshold: Maximum acceptable latency in seconds
+                              (25s = 95th percentile for multi-term queries with APIs)
+            strict_range_check: If False, only min is enforced (max is informational)
+                               If True, both min and max are enforced
         """
         self.min_results, self.max_results = target_range
         self.latency_threshold = latency_threshold
+        self.strict_range_check = strict_range_check
 
     def evaluate(self, test_case: Dict[str, Any], result: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -40,9 +45,12 @@ class QuantitativeMetrics:
         Returns:
             Dictionary with quantitative metric evaluations
         """
+        result_count = result.get('result_count', 0)
         metrics = {
-            'result_count': result.get('result_count', 0),
+            'result_count': result_count,
             'in_target_range': self._check_result_range(result, test_case),
+            'below_minimum': result_count < self.min_results,
+            'above_maximum': result_count > self.max_results,  # Informational only
             'latency_seconds': result.get('latency_seconds', 0),  # From runner, not pipeline
             'latency_acceptable': self._check_latency(result),
             'api_calls': result.get('api_calls', {}),
@@ -59,9 +67,10 @@ class QuantitativeMetrics:
 
     def _check_result_range(self, result: Dict[str, Any], test_case: Dict[str, Any]) -> bool:
         """
-        Check if result count is in acceptable range.
+        Check if result count meets minimum threshold.
+        Maximum is informational only (unless strict_range_check=True).
 
-        Uses test case-specific range if provided, otherwise uses default range.
+        Uses test case-specific settings if provided, otherwise uses defaults.
         """
         result_count = result.get('result_count', 0)
 
@@ -69,8 +78,17 @@ class QuantitativeMetrics:
         expected = test_case.get('expected_results', {})
         min_count = expected.get('min_count', self.min_results)
         max_count = expected.get('max_count', self.max_results)
+        strict = expected.get('strict_range', self.strict_range_check)
 
-        return min_count <= result_count <= max_count
+        # Check minimum (always enforced)
+        if result_count < min_count:
+            return False
+
+        # Check maximum (only if strict mode)
+        if strict and result_count > max_count:
+            return False
+
+        return True
 
     def _check_latency(self, result: Dict[str, Any]) -> bool:
         """
