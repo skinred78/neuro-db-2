@@ -1,0 +1,111 @@
+[
+  {
+    "test_id": "BM-001",
+    "input": "TMS, stroke, memory",
+    "source": "Lex Stream example",
+    "expected_results": {
+      "min_count": 10,
+      "max_count": 20
+    },
+    "expected_classifications": {
+      "TMS": {
+        "category": "INTERVENTION",
+        "expansion": "Transcranial Magnetic Stimulation"
+      },
+      "stroke": {
+        "category": "CONDITION"
+      },
+      "memory": {
+        "category": "OUTCOME"
+      }
+    },
+    "validation": "James review",
+    "description": "Common neuroimaging research query"
+  },
+  {
+    "test_id": "BM-002",
+    "input": "MS + neuromodulation",
+    "source": "POC test case",
+    "expected_results": {
+      "min_count": 5,
+      "max_count": 15
+    },
+    "expected_classifications": {
+      "MS": {
+        "category": "CONDITION",
+        "expansion": "Multiple Sclerosis"
+      },
+      "neuromodulation": {
+        "category": "INTERVENTION"
+      }
+    },
+    "validation": "Current baseline: 5 hits",
+    "description": "Proven POC improvement case - baseline gets 1 hit, UMLS+PubTator gets 5 hits"
+  },
+  {
+    "test_id": "BM-003",
+    "input": "Parkinson's DBS motor",
+    "source": "Common clinical query",
+    "expected_results": {
+      "min_count": 10,
+      "max_count": 20
+    },
+    "expected_classifications": {
+      "Parkinson's": {
+        "category": "CONDITION"
+      },
+      "DBS": {
+        "category": "INTERVENTION",
+        "expansion": "Deep Brain Stimulation"
+      },
+      "motor": {
+        "category": "OUTCOME"
+      }
+    },
+    "validation": "High clinical relevance",
+    "description": "Clinical neuroscience query with abbreviation"
+  },
+  {
+    "test_id": "BM-004",
+    "input": "fMRI motor cortex",
+    "source": "Neuroimaging research",
+    "expected_results": {
+      "min_count": 10,
+      "max_count": 20
+    },
+    "expected_classifications": {
+      "fMRI": {
+        "category": "INTERVENTION",
+        "expansion": "Functional Magnetic Resonance Imaging"
+      },
+      "motor cortex": {
+        "category": "ANATOMY"
+      }
+    },
+    "validation": "Research-focused",
+    "description": "Neuroimaging technique with anatomical target"
+  },
+  {
+    "test_id": "BM-005",
+    "input": "depression neuromodulation RCT",
+    "source": "Evidence-based query",
+    "expected_results": {
+      "min_count": 5,
+      "max_count": 10
+    },
+    "expected_classifications": {
+      "depression": {
+        "category": "CONDITION"
+      },
+      "neuromodulation": {
+        "category": "INTERVENTION"
+      },
+      "RCT": {
+        "category": "STUDY_DESIGN",
+        "expansion": "Randomized Controlled Trial"
+      }
+    },
+    "validation": "Study design filter",
+    "description": "Evidence-based medicine query with study design specification"
+  }
+]
