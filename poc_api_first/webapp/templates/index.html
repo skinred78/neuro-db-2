@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NeuroDB Query Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>PubMed Query Generator</h1>
+        <p>Enter neuroscience keywords separated by commas or plus signs</p>
+
+        <form method="POST" action="/generate">
+            <input type="text" name="keywords" placeholder="e.g., TMS, stroke, memory" required autofocus>
+
+            <fieldset class="config-selector">
+                <legend>Select Configurations to Compare:</legend>
+
+                {% for config in configs %}
+                <label class="checkbox-label">
+                    <input type="checkbox" name="configs" value="{{ config.id }}" checked>
+                    <strong>{{ config.name }}</strong> - {{ config.description }}
+                </label>
+                {% endfor %}
+            </fieldset>
+
+            <button type="submit">Generate Queries</button>
+        </form>
+
+        <div class="info">
+            <h3>How It Works:</h3>
+            <ul>
+                <li><strong>UMLS + PubTator</strong>: Uses PubTator for abbreviation expansion, then UMLS for semantic classification</li>
+                <li><strong>Full Hybrid</strong>: Adds NeuroDB-2 neuroscience-specific abbreviations (highest priority)</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

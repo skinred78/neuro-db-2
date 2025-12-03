@@ -53,17 +53,27 @@ class SemanticQueryPipeline:
         Initialize pipeline with optional client injection.
 
         Args:
-            umls_client: UMLSClient instance (creates default if None)
+            umls_client: UMLSClient instance (creates default if None AND no classify_fn)
             pubmed_client: PubMedClient instance (creates default if None)
-            pubtator_client: PubTatorClient instance (creates default if None)
+            pubtator_client: PubTatorClient instance (creates default if None AND no classify_fn)
             classify_fn: Custom classification function (uses self.classify_terms if None)
                          Signature: classify_fn(terms: List[str]) -> List[Dict]
                          MUST return records matching CLASSIFICATION_SCHEMA
+                         When provided, UMLS/PubTator clients are optional.
         """
-        self.umls = umls_client if umls_client is not None else UMLSClient()
-        self.pubmed = pubmed_client if pubmed_client is not None else PubMedClient()
-        self.pubtator = pubtator_client if pubtator_client is not None else PubTatorClient()
         self._custom_classify_fn = classify_fn
+
+        # Only create default UMLS/PubTator clients if no custom classify_fn
+        # Custom classify_fn may not need these APIs (e.g., NeuroDBOnlyConfig)
+        if classify_fn is None:
+            self.umls = umls_client if umls_client is not None else UMLSClient()
+            self.pubtator = pubtator_client if pubtator_client is not None else PubTatorClient()
+        else:
+            self.umls = umls_client  # May be None - custom classify_fn handles classification
+            self.pubtator = pubtator_client  # May be None
+
+        # PubMed client always needed for search
+        self.pubmed = pubmed_client if pubmed_client is not None else PubMedClient()
 
         # API call tracking for cost/usage analysis
         self.api_call_counts = {'umls': 0, 'pubtator': 0, 'pubmed': 0}

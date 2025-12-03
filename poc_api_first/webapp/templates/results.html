@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Query Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Query Results</h1>
+
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        <a href="/">← Back</a>
+        {% else %}
+
+        <div class="input-summary">
+            <strong>Keywords:</strong> {{ keywords }}
+            <br>
+            <strong>Comparing:</strong> {{ selected_configs|length }} configurations
+        </div>
+
+        <div class="comparison" data-cols="{{ selected_configs|length }}">
+            {% for config_id in selected_configs %}
+            {% set result = results.get(config_id, {}) %}
+            <div class="config-result">
+                <h2>{{ config_names.get(config_id, config_id) }}</h2>
+
+                {% if result.get('error') %}
+                <div class="error">{{ result.error }}</div>
+                {% else %}
+                <div class="query-box">
+                    <strong>PubMed Query:</strong>
+                    <pre>{{ result.get('query', 'N/A') }}</pre>
+                </div>
+
+                <p class="result-count">Results: {{ result.get('result_count', 0) }} articles</p>
+
+                <details>
+                    <summary>Classification Details</summary>
+                    <ul>
+                    {% for cls in result.get('classifications', []) %}
+                        <li>
+                            <strong>{{ cls.get('original_term', cls.get('term', '')) }}</strong> → {{ cls.get('category', 'UNKNOWN') }}
+                            <br><small>Source: {{ cls.get('disambiguation_source', 'unknown') }}, Confidence: {{ "%.2f"|format(cls.get('confidence', 0.5)) }}</small>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </details>
+
+                <!-- Article cards -->
+                {% set articles = result.get('articles', [])[:10] %}
+                {% if articles %}
+                <div class="articles-section">
+                    <h4>Articles ({{ articles|length }} shown)</h4>
+
+                    <div class="legend">
+                        <span class="badge unique">Unique to this config</span>
+                        <span class="badge common">Found by both</span>
+                    </div>
+
+                    {% for art in articles %}
+                    <div class="article-card">
+                        <h5>
+                            <a href="https://pubmed.ncbi.nlm.nih.gov/{{ art.get('pmid', '') }}" target="_blank">
+                                {{ art.get('title', 'Untitled') }}
+                            </a>
+                        </h5>
+                        <p class="meta">
+                            <strong>Authors:</strong>
+                            {% set authors = art.get('authors', []) %}
+                            {% for author in authors[:3] %}
+                                {{ author }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                            {% if authors|length > 3 %}et al.{% endif %}
+                        </p>
+                        <p class="meta">
+                            {{ art.get('journal', '') }} | {{ art.get('pub_date', '') }} | PMID: {{ art.get('pmid', '') }}
+                        </p>
+                        {% set abstract = art.get('abstract', '') %}
+                        {% if abstract %}
+                        <p class="abstract-snippet">
+                            {{ abstract[:150] }}{% if abstract|length > 150 %}...{% endif %}
+                        </p>
+                        {% endif %}
+                        <span class="badge {{ 'unique' if art.get('is_unique') else 'common' }}">
+                            {{ 'Unique' if art.get('is_unique') else 'Common' }}
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <a href="/" class="back-link">← Try Another Query</a>
+        {% endif %}
+    </div>
+</body>
+</html>

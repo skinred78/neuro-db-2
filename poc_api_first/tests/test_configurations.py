@@ -17,9 +17,21 @@ CAPABILITY_MATRIX = {
         'supports_component_detection': True,  # Rule-based, not UMLS-based
         'supports_synonym_expansion': True
     },
+    'NeuroDBOnly': {
+        'supports_semantic_classification': False,  # No UMLS classification
+        'supports_abbreviation_expansion': True,   # NeuroDB abbreviation lookup
+        'supports_component_detection': False,
+        'supports_synonym_expansion': False
+    },
     'UMLSOnly': {
         'supports_semantic_classification': True,
-        'supports_abbreviation_expansion': False,
+        'supports_abbreviation_expansion': False,  # No abbreviation expansion
+        'supports_component_detection': False,
+        'supports_synonym_expansion': False
+    },
+    'PubTatorOnly': {
+        'supports_semantic_classification': False,  # No UMLS classification
+        'supports_abbreviation_expansion': True,    # PubTator disambiguation
         'supports_component_detection': False,
         'supports_synonym_expansion': False
     },
@@ -106,6 +118,255 @@ class LexStream2BaselineConfig:
         )
 
 
+class NeuroDBOnlyConfig:
+    """
+    Single-layer: Only NeuroDB abbreviation lookup (no UMLS classification, no PubTator)
+
+    Flow:
+    - Abbreviation detected → NeuroDB lookup
+    - Match found → use expanded term directly (no UMLS classification)
+    - No match → use original term as-is
+
+    Fallback: Original term (UNKNOWN category, no classification)
+
+    Purpose: Baseline to measure value of NeuroDB neuroscience-specific abbreviations
+    without any external API calls.
+    """
+    name = "NeuroDBOnly"
+    use_neurodb = True
+    use_umls = False
+    use_pubtator = False
+
+    def __init__(self):
+        """Initialize with NeuroDB-2 local database only."""
+        neurodb_path = Path(__file__).parent.parent.parent / 'data' / 'neuro_terms.json'
+
+        if not neurodb_path.exists():
+            raise FileNotFoundError(
+                f"NeuroDB-2 data file not found: {neurodb_path}\n"
+                "Please ensure data/neuro_terms.json exists in project root."
+            )
+
+        with open(neurodb_path) as f:
+            raw_data = json.load(f)
+
+        # Build abbreviation lookup from list format
+        self.abbreviations = {}
+        for entry in raw_data:
+            abbrev = entry.get('Abbreviation')
+            term_name = entry.get('Term')
+            if abbrev and term_name:
+                self.abbreviations[abbrev.lower()] = term_name
+
+    @staticmethod
+    def is_abbreviation(term):
+        """Check if term is likely an abbreviation."""
+        return len(term) <= 5 or term.isupper() or (len(term.split()) == 1 and len(term) <= 10)
+
+    def classify_term(self, term):
+        """
+        Single-layer: NeuroDB abbreviation lookup only.
+
+        No UMLS classification - returns UNKNOWN category.
+        Confidence 0.9 for NeuroDB matches, 0.3 for fallback.
+        """
+        original_term = term
+
+        # NeuroDB abbreviation lookup
+        if term.lower() in self.abbreviations:
+            resolved = self.abbreviations[term.lower()]
+            return {
+                'term': resolved,
+                'original_term': original_term,
+                'category': 'UNKNOWN',  # No UMLS classification
+                'disambiguation_source': 'NeuroDB',
+                'confidence': 0.9  # High confidence for curated match
+            }
+
+        # Fallback: use original term
+        return {
+            'term': term,
+            'original_term': original_term,
+            'category': 'UNKNOWN',
+            'disambiguation_source': 'none',
+            'confidence': 0.3  # Low confidence, no disambiguation
+        }
+
+    def _classify_terms_batch(self, terms):
+        """Batch classification - wraps classify_term for pipeline callback."""
+        return [self.classify_term(t) for t in terms]
+
+    def run(self, user_input, days=60, max_results=20, verbose=False):
+        """
+        Execute pipeline with NeuroDB-only classification.
+
+        No external API calls for classification - only PubMed search.
+        """
+        from poc_api_first.poc_pipeline import SemanticQueryPipeline
+
+        pipeline = SemanticQueryPipeline(
+            umls_client=None,      # No UMLS
+            pubmed_client=None,    # Use default
+            pubtator_client=None,  # No PubTator
+            classify_fn=self._classify_terms_batch
+        )
+        return pipeline.run(
+            user_input=user_input,
+            days=days,
+            max_results=max_results,
+            verbose=verbose
+        )
+
+
+class UMLSOnlyConfig:
+    """
+    Single-layer: Only UMLS semantic classification (no abbreviation expansion)
+
+    Flow:
+    - All terms → UMLS direct lookup
+    - No PubTator disambiguation
+    - No NeuroDB expansion
+
+    Limitation: Abbreviations may fail UMLS lookup (e.g., "MS" → no CUI found)
+
+    Purpose: Baseline to show value of disambiguation layers (PubTator, NeuroDB)
+    """
+    name = "UMLSOnly"
+    use_neurodb = False
+    use_umls = True
+    use_pubtator = False
+
+    def __init__(self):
+        """Initialize UMLS client only."""
+        from poc_api_first.clients.umls import UMLSClient
+
+        api_key = os.getenv("UMLS_API_KEY")
+        if not api_key:
+            raise ValueError("UMLS_API_KEY environment variable not set")
+
+        self.umls_client = UMLSClient(api_key)
+
+    def classify_term(self, term):
+        """
+        Single-layer: UMLS direct lookup only.
+
+        No abbreviation expansion - abbreviations sent directly to UMLS.
+        """
+        result = self.umls_client.classify_term(term)
+        result['original_term'] = term
+        result['disambiguation_source'] = 'UMLS_direct'
+        result['confidence'] = 0.7 if result.get('cui') else 0.3
+        return result
+
+    def _classify_terms_batch(self, terms):
+        """Batch classification - wraps classify_term for pipeline callback."""
+        return [self.classify_term(t) for t in terms]
+
+    def run(self, user_input, days=60, max_results=20, verbose=False):
+        """
+        Execute pipeline with UMLS-only classification.
+
+        No abbreviation expansion - relies on UMLS to understand abbreviations.
+        """
+        from poc_api_first.poc_pipeline import SemanticQueryPipeline
+
+        pipeline = SemanticQueryPipeline(
+            umls_client=self.umls_client,
+            pubmed_client=None,    # Use default
+            pubtator_client=None,  # No PubTator
+            classify_fn=self._classify_terms_batch
+        )
+        return pipeline.run(
+            user_input=user_input,
+            days=days,
+            max_results=max_results,
+            verbose=verbose
+        )
+
+
+class PubTatorOnlyConfig:
+    """
+    Single-layer: Only PubTator disambiguation (no UMLS classification)
+
+    Flow:
+    - Abbreviation detected → PubTator autocomplete
+    - Match found → use expanded term (no UMLS classification)
+    - No match → use original term as-is
+
+    Fallback: Original term (UNKNOWN category)
+
+    Purpose: Measure PubTator disambiguation quality without UMLS.
+    """
+    name = "PubTatorOnly"
+    use_neurodb = False
+    use_umls = False
+    use_pubtator = True
+
+    def __init__(self):
+        """Initialize PubTator client only."""
+        from poc_api_first.clients.pubtator import PubTatorClient
+        self.pubtator_client = PubTatorClient()
+
+    @staticmethod
+    def is_abbreviation(term):
+        """Check if term is likely an abbreviation."""
+        return len(term) <= 5 or term.isupper() or (len(term.split()) == 1 and len(term) <= 10)
+
+    def classify_term(self, term):
+        """
+        Single-layer: PubTator disambiguation only.
+
+        No UMLS classification - returns UNKNOWN category.
+        """
+        original_term = term
+
+        # PubTator disambiguation
+        if self.is_abbreviation(term):
+            disambiguation = self.pubtator_client.disambiguate_term(term)
+            if disambiguation['confidence'] > 0.5:
+                return {
+                    'term': disambiguation['resolved'],
+                    'original_term': original_term,
+                    'category': 'UNKNOWN',  # No UMLS classification
+                    'disambiguation_source': 'PubTator',
+                    'confidence': disambiguation['confidence']
+                }
+
+        # Fallback: use original term
+        return {
+            'term': term,
+            'original_term': original_term,
+            'category': 'UNKNOWN',
+            'disambiguation_source': 'none',
+            'confidence': 0.3
+        }
+
+    def _classify_terms_batch(self, terms):
+        """Batch classification - wraps classify_term for pipeline callback."""
+        return [self.classify_term(t) for t in terms]
+
+    def run(self, user_input, days=60, max_results=20, verbose=False):
+        """
+        Execute pipeline with PubTator-only disambiguation.
+
+        No semantic classification - only abbreviation expansion.
+        """
+        from poc_api_first.poc_pipeline import SemanticQueryPipeline
+
+        pipeline = SemanticQueryPipeline(
+            umls_client=None,      # No UMLS
+            pubmed_client=None,    # Use default
+            pubtator_client=self.pubtator_client,
+            classify_fn=self._classify_terms_batch
+        )
+        return pipeline.run(
+            user_input=user_input,
+            days=days,
+            max_results=max_results,
+            verbose=verbose
+        )
+
+
 class UMLSPubTatorConfig:
     """
     UMLS + PubTator (POC - PROVEN 5 hits)
@@ -143,14 +404,49 @@ class UMLSPubTatorConfig:
         1. PubTator abbreviation expansion (if abbreviation detected)
         2. UMLS semantic classification
         """
+        original_term = term
+        disambiguation_source = 'UMLS_direct'
+        confidence = 0.5
+
         # Step 1: PubTator disambiguation
         if self.is_abbreviation(term):
             disambiguation = self.pubtator_client.disambiguate_term(term)
             if disambiguation['confidence'] > 0.5:
                 term = disambiguation['resolved']
+                disambiguation_source = 'PubTator'
+                confidence = disambiguation['confidence']
 
         # Step 2: UMLS classification
-        return self.umls_client.classify_term(term)
+        result = self.umls_client.classify_term(term)
+        result['original_term'] = original_term
+        result['disambiguation_source'] = disambiguation_source
+        result['confidence'] = confidence
+        return result
+
+    def _classify_terms_batch(self, terms):
+        """Batch classification - wraps classify_term for pipeline callback."""
+        return [self.classify_term(t) for t in terms]
+
+    def run(self, user_input, days=60, max_results=20, verbose=False):
+        """
+        Execute semantic pipeline with this config's classification.
+
+        Creates SemanticQueryPipeline with injected clients and classify_fn.
+        """
+        from poc_api_first.poc_pipeline import SemanticQueryPipeline
+
+        pipeline = SemanticQueryPipeline(
+            umls_client=self.umls_client,
+            pubmed_client=None,  # Use default
+            pubtator_client=self.pubtator_client,
+            classify_fn=self._classify_terms_batch
+        )
+        return pipeline.run(
+            user_input=user_input,
+            days=days,
+            max_results=max_results,
+            verbose=verbose
+        )
 
 
 class FullHybridConfig:
@@ -189,7 +485,16 @@ class FullHybridConfig:
             )
 
         with open(neurodb_path) as f:
-            self.neurodb = json.load(f)
+            raw_data = json.load(f)
+
+        # Build abbreviation lookup from list format
+        # neuro_terms.json is a list of dicts with 'Abbreviation' and 'Term' fields
+        self.abbreviations = {}
+        for entry in raw_data:
+            abbrev = entry.get('Abbreviation')
+            term_name = entry.get('Term')
+            if abbrev and term_name:
+                self.abbreviations[abbrev.lower()] = term_name
 
     @staticmethod
     def is_abbreviation(term):
@@ -205,10 +510,13 @@ class FullHybridConfig:
 
         Selects highest-confidence expansion for UMLS classification.
         """
+        original_term = term
+
         # Layer 1: NeuroDB-2 (neuroscience-specific - highest priority)
-        if term.lower() in self.neurodb.get('abbreviations', {}):
-            resolved = self.neurodb['abbreviations'][term.lower()]['expansion']
+        if term.lower() in self.abbreviations:
+            resolved = self.abbreviations[term.lower()]
             result = self.umls_client.classify_term(resolved)
+            result['original_term'] = original_term
             result['disambiguation_source'] = 'NeuroDB'
             result['confidence'] = 1.0
             return result
@@ -219,27 +527,61 @@ class FullHybridConfig:
             if disambiguation['confidence'] > 0.5:
                 resolved = disambiguation['resolved']
                 result = self.umls_client.classify_term(resolved)
+                result['original_term'] = original_term
                 result['disambiguation_source'] = 'PubTator'
                 result['confidence'] = disambiguation['confidence'] * 0.9
                 return result
 
         # Layer 3: UMLS direct lookup (fallback)
         result = self.umls_client.classify_term(term)
+        result['original_term'] = original_term
         result['disambiguation_source'] = 'UMLS_direct'
         result['confidence'] = 0.5
         return result
 
+    def _classify_terms_batch(self, terms):
+        """Batch classification - wraps classify_term for pipeline callback."""
+        return [self.classify_term(t) for t in terms]
 
-# MVP Configuration Set (3 configs for initial testing)
+    def run(self, user_input, days=60, max_results=20, verbose=False):
+        """
+        Execute semantic pipeline with this config's 3-layer classification.
+
+        Creates SemanticQueryPipeline with injected clients and classify_fn.
+        NeuroDB-2 provides highest-priority neuroscience abbreviation expansion.
+        """
+        from poc_api_first.poc_pipeline import SemanticQueryPipeline
+
+        pipeline = SemanticQueryPipeline(
+            umls_client=self.umls_client,
+            pubmed_client=None,  # Use default
+            pubtator_client=self.pubtator_client,
+            classify_fn=self._classify_terms_batch
+        )
+        return pipeline.run(
+            user_input=user_input,
+            days=days,
+            max_results=max_results,
+            verbose=verbose
+        )
+
+
+# MVP Configuration Set (5 configs for comparison testing)
 MVP_CONFIGURATIONS = [
     # LexStream2BaselineConfig,  # Reference only - requires Lex Stream 2 implementation
-    UMLSPubTatorConfig,           # Proven POC
-    FullHybridConfig              # Full hybrid with NeuroDB-2
+    NeuroDBOnlyConfig,            # Single-layer: NeuroDB abbreviation expansion only
+    UMLSOnlyConfig,               # Single-layer: UMLS semantic classification only
+    PubTatorOnlyConfig,           # Single-layer: PubTator disambiguation only
+    UMLSPubTatorConfig,           # Two-layer: UMLS + PubTator (proven POC)
+    FullHybridConfig              # Three-layer: NeuroDB + PubTator + UMLS
 ]
 
 # Full Configuration Set (for comprehensive testing when all implementations ready)
 ALL_CONFIGURATIONS = [
     LexStream2BaselineConfig,
+    NeuroDBOnlyConfig,
+    UMLSOnlyConfig,
+    PubTatorOnlyConfig,
     UMLSPubTatorConfig,
     FullHybridConfig
 ]
