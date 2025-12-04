@@ -1,7 +1,21 @@
 """
-Test configurations for semantic query pipeline evaluation.
+Search Methodology Comparison Framework - Configuration Definitions.
 
-Defines capability matrix and configuration classes for comparing tool combinations.
+PURPOSE: Define multiple search tool configurations for side-by-side comparison.
+This allows researchers to evaluate which tool combination works best for their
+specific query types and domains.
+
+CONFIGURATIONS:
+- LexStream2Baseline: Original Lex Stream pipeline (rule-based)
+- NeuroDBOnly: Local abbreviation lookup (neuroscience-specific)
+- UMLSOnly: UMLS semantic classification (no disambiguation)
+- PubTatorOnly: PubTator biomedical disambiguation (no classification)
+- UMLSPubTator: 2-layer hybrid (disambiguation → classification)
+- UMLSNeuroDB: NeuroDB abbreviations + UMLS classification
+- FullHybrid: 3-layer (NeuroDB → PubTator → UMLS)
+
+CAPABILITY_MATRIX: Defines which metrics each config can produce, ensuring
+fair comparison (e.g., don't penalize PubTator-only for lacking semantic classification).
 """
 
 import os
