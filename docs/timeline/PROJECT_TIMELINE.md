@@ -208,13 +208,18 @@ Need **abbreviation disambiguation layer** before UMLS semantic classification
 
 ---
 
-## Phase 5: API-First POC (Dec 2-3, 2025)
+## Phase 5: API-First POC & Comparison Framework (Dec 2-3, 2025)
 
 ### Timeline
 **Dec 2-3, 2025**
 
 ### Objective
-Validate if PubTator + UMLS APIs can solve semantic classification without local database
+Build a **methodology comparison framework** to evaluate different search tool combinations.
+Initial validation: Can PubTator + UMLS APIs solve semantic classification?
+
+### Core Purpose
+**Compare different search methodologies side-by-side** to help researchers identify optimal
+query expansion strategies. Not just validating one approach, but enabling systematic comparison.
 
 ### Hypothesis
 ```
@@ -272,15 +277,30 @@ PubTator (abbreviation disambiguation) → UMLS (semantic classification) → Sm
 
 ---
 
-## Phase 6: Hybrid Approach (Dec 3, 2025)
+## Phase 6: Comparison Framework Implementation (Dec 3-4, 2025)
 
 ### Timeline
-**Dec 3, 2025** (Current)
+**Dec 3-4, 2025** (Current)
 
 ### Objective
-Combine API-first + NeuroDB-2 for optimal performance
+Implement full comparison framework with multiple configurations and evaluation metrics.
 
-### Recommended Architecture
+### Configurations Available
+| Config | Tools | Purpose |
+|--------|-------|---------|
+| NeuroDB-Only | Local DB | Neuroscience-specific abbreviations |
+| UMLS-Only | UMLS API | Semantic classification (no disambiguation) |
+| PubTator-Only | PubTator API | Biomedical disambiguation (no classification) |
+| UMLS+PubTator | PubTator → UMLS | 2-layer hybrid |
+| FullHybrid | NeuroDB → PubTator → UMLS | 3-layer comprehensive |
+
+### Framework Components
+- **Flask Webapp**: Side-by-side comparison UI (select 2-5 configs)
+- **Test Runner**: Automated benchmark execution across configs
+- **Evaluators**: Quantitative metrics (latency, result count, accuracy)
+- **CAPABILITY_MATRIX**: Fair comparison (skip inapplicable metrics per config)
+
+### Recommended Architecture (FullHybrid)
 ```
 User Input
   ↓
