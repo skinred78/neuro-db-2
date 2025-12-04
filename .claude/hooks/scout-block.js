@@ -5,6 +5,12 @@
  *
  * Blocks access to heavy directories: node_modules, __pycache__, .git/, dist/, build/
  *
+ * Blocking Rules:
+ * - File paths: Blocks any file_path/path/pattern containing blocked directories
+ * - Bash commands: Blocks directory access (cd, ls, cat, etc.) but ALLOWS build commands
+ *   - Blocked: cd node_modules, ls build/, cat dist/file.js
+ *   - Allowed: npm build, pnpm build, yarn build, npm run build
+ *
  * Platform Detection:
  * - Windows (win32): Uses PowerShell via scout-block.ps1
  * - Unix (linux/darwin): Uses Bash via scout-block.sh
@@ -15,9 +21,14 @@
  * - 2: Command blocked or error occurred
  */
 
-const { execSync } = require('child_process');
-const path = require('path');
-const fs = require('fs');
+import { execSync } from 'child_process';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 try {
   // Read stdin synchronously
@@ -32,7 +43,7 @@ try {
   // Validate JSON structure (basic check)
   try {
     const data = JSON.parse(hookInput);
-    if (!data.tool_input || typeof data.tool_input.command !== 'string') {
+    if (!data.tool_input || typeof data.tool_input !== 'object') {
       console.error('ERROR: Invalid JSON structure');
       process.exit(2);
     }
