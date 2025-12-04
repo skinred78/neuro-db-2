@@ -1,15 +1,35 @@
-# POC Results: API-First Semantic Query Expansion
+# POC Results: Search Methodology Comparison Framework
 
-**Date**: 2025-12-02  
-**Goal**: Validate if PubTator + UMLS APIs can replace/supplement NeuroDB-2 for semantic-aware query expansion
+**Date**: 2025-12-02 (POC validated), 2025-12-04 (framework established)
+**Purpose**: Compare different search tool combinations to identify optimal query expansion strategies
+
+---
+
+## What This Is
+
+**A methodology comparison framework** for evaluating different combinations of search tools:
+
+| Configuration | Tools Used | Use Case |
+|---------------|------------|----------|
+| NeuroDB-Only | Local abbreviation DB | Neuroscience-specific terms |
+| UMLS-Only | UMLS API | Semantic classification |
+| PubTator-Only | PubTator API | Biomedical disambiguation |
+| UMLS+PubTator | PubTator → UMLS | 2-layer hybrid |
+| FullHybrid | NeuroDB → PubTator → UMLS | 3-layer comprehensive |
+
+**Why Compare?** Different tool combinations excel at different query types. Researchers can use this framework to:
+- Identify which pipeline works best for their domain
+- Understand trade-offs (latency, accuracy, coverage)
+- Make informed decisions about search infrastructure
 
 ---
 
 ## Executive Summary
 
-✅ **POC SUCCEEDED** - API-first approach solves the semantic classification problem.
+✅ **POC VALIDATED** - Framework successfully compares multiple methodologies.
 
-**Key Result**: "MS + neuromodulation" now returns 5 relevant papers (vs 1-14 with blind expansion)
+**Key Finding**: Tool combination matters significantly:
+- "MS + neuromodulation" → 5 relevant papers (PubTator+UMLS) vs 14 irrelevant (UMLS-only)
 
 ---
 
@@ -197,22 +217,49 @@ def enhanced_pipeline(user_input):
 
 ---
 
-## Files Created
+## Framework Architecture
 
 ```
-poc-api-first/
-├── .env                          # UMLS API key
-├── clients/
-│   ├── umls.py                   # UMLS Metathesaurus client (semantic types)
-│   ├── pubmed.py                 # PubMed E-utilities client
-│   └── pubtator.py               # PubTator 3.0 client (abbreviation disambiguation)
-├── poc_pipeline.py               # Main semantic query pipeline
-├── results/
-│   └── test_ms_neuromodulation.json
+poc_api_first/
+├── clients/                      # API clients
+│   ├── umls.py                   # UMLS Metathesaurus (semantic classification)
+│   ├── pubmed.py                 # PubMed E-utilities (literature search)
+│   └── pubtator.py               # PubTator 3.0 (abbreviation disambiguation)
+├── tests/
+│   ├── test_configurations.py    # 5+ pipeline configs with CAPABILITY_MATRIX
+│   ├── test_runner.py            # Multi-config test execution
+│   └── test_data/                # Benchmark test cases
+├── evaluators/
+│   └── quantitative_metrics.py   # Automated metric evaluation
+├── webapp/                       # Flask comparison UI
+│   ├── app.py                    # Side-by-side config comparison
+│   └── templates/                # Results display
+├── poc_pipeline.py               # Core semantic query pipeline
+├── results/                      # Test results (JSON)
 └── POC_RESULTS.md                # This document
 ```
 
 ---
 
-**Prepared by**: Claude (POC execution)  
+## Comparison Capabilities
+
+### What Can Be Compared
+
+| Metric | Description | Configs |
+|--------|-------------|---------|
+| **Result Count** | Papers returned (target: 5-20) | All |
+| **Latency** | End-to-end response time | All |
+| **Semantic Accuracy** | Correct PICO classification | UMLS-based only |
+| **Abbreviation Handling** | Correct expansion | PubTator/NeuroDB |
+| **Coverage Gaps** | Terms that fail to resolve | All |
+
+### How to Use
+
+1. **Flask Webapp**: Select 2-5 configs, enter keywords, compare side-by-side
+2. **Test Runner**: `python -m poc_api_first.tests.test_runner` for automated benchmarks
+3. **Results Analysis**: Review JSON outputs in `results/` directory
+
+---
+
+**Prepared by**: Claude (POC execution)
 **Review with**: James (neuroscientist validation)

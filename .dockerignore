@@ -1,0 +1,12 @@
+.git
+*.md
+results/
+tests/
+*.pyc
+__pycache__
+.env
+.claude/
+plans/
+docs/
+MeshValidation/
+*.csv

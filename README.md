@@ -181,19 +181,35 @@ This project uses ClaudeKit framework with specialized agents:
 
 See `CLAUDE.md` for complete agent orchestration protocols.
 
+## Search Methodology Comparison Framework
+
+**Location**: `poc_api_first/`
+
+A framework for **comparing different search tool combinations** side-by-side:
+
+| Configuration | Tools | Purpose |
+|---------------|-------|---------|
+| NeuroDB-Only | Local DB | Neuroscience-specific abbreviations |
+| UMLS-Only | UMLS API | Semantic classification |
+| PubTator-Only | PubTator API | Biomedical disambiguation |
+| UMLS+PubTator | 2-layer | Disambiguation → Classification |
+| FullHybrid | 3-layer | NeuroDB → PubTator → UMLS |
+
+**Usage**:
+- **Flask Webapp**: Side-by-side comparison UI (`poc_api_first/webapp/`)
+- **Test Runner**: Automated benchmarks (`poc_api_first/tests/test_runner.py`)
+- **Results**: `poc_api_first/results/`
+
+See: `poc_api_first/POC_RESULTS.md` for detailed documentation.
+
 ## Next Steps
 
-### Current Priority: MeSH Hierarchy Trees
-Based on neuroscientist feedback, implementing hierarchical term relationships:
-- MeSH tree numbers (e.g., C10.228.140.079.862.500)
-- Parent/child relationships
-- Sibling terms
-- Semantic context for component detection
-
-See: `docs/analysis/20251117-neuroscientist-feedback-expansion-trees.md` (Lex Stream repo)
+### Current Priority: Comparison Framework Refinement
+- Improve abbreviation coverage (TMS, DBS, fMRI disambiguation)
+- Add caching layer (target: <2s latency)
+- Expand test benchmark suite
 
 ### Future Enhancements
-- ⏳ UMLS Metathesaurus integration (license pending)
 - ⏳ MeSH hierarchy tree implementation
 - ⏳ Automated export pipeline
 - ⏳ Expanded synonym coverage

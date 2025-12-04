@@ -2,6 +2,10 @@
 requests>=2.31.0
 python-dotenv>=1.0.0
 
+# Web framework
+Flask>=3.0.0
+gunicorn>=21.0.0
+
 # API clients
 biopython>=1.81  # For NCBI/PubMed parsing (if needed)
 

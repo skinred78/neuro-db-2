@@ -1,8 +1,18 @@
 """
-Flask webapp for PubMed Query Generator.
+Flask webapp for Search Methodology Comparison.
 
-Compares different pipeline configurations (UMLSPubTator, FullHybrid, etc.)
-for generating PubMed search queries from neuroscience keywords.
+PURPOSE: Side-by-side comparison of different search tool combinations to help
+researchers identify optimal query expansion strategies for their domain.
+
+CONFIGURATIONS:
+- NeuroDB-Only: Local abbreviation DB (neuroscience-specific)
+- UMLS-Only: Semantic classification only
+- PubTator-Only: Biomedical disambiguation only
+- UMLS+PubTator: 2-layer hybrid (disambiguation → classification)
+- FullHybrid: 3-layer (NeuroDB → PubTator → UMLS)
+
+USAGE: Select 2-5 configs, enter keywords, compare results side-by-side.
+Each config shows: resolved terms, classifications, generated query, paper count.
 """
 
 from flask import Flask, render_template, request
@@ -57,6 +67,12 @@ CONFIG_METADATA = {
         'class': FullHybridConfig
     }
 }
+
+
+@app.route('/healthz')
+def healthz():
+    """Health check endpoint for Cloud Run."""
+    return 'OK', 200
 
 
 @app.route('/')
@@ -148,4 +164,4 @@ def generate():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='127.0.0.1', port=5000)
+    app.run(debug=False, host='127.0.0.1', port=5000)
