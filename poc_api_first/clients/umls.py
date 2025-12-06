@@ -2,7 +2,9 @@
 UMLS Metathesaurus API Client
 
 Provides semantic type classification for biomedical terms.
-135 semantic types available (T047=Disease, T061=Therapeutic Procedure, etc.)
+127 semantic types mapped to 7 neuroscience-relevant categories.
+
+Reference: poc_api_first/semantic_types.py for full TUI mapping
 """
 
 import os
@@ -10,45 +12,105 @@ import requests
 from typing import List, Dict, Optional
 from dotenv import load_dotenv
 
+from poc_api_first.semantic_types import (
+    SemanticCategory,
+    get_category_from_tui,
+    get_semantic_group,
+    TUI_TO_SEMANTIC_GROUP,
+    CATEGORY_DISPLAY_NAMES,
+)
+from poc_api_first.expansion_rules import (
+    get_expansion_rule,
+    get_max_expansions,
+    filter_by_category,
+    ExpansionStrategy,
+)
+
 load_dotenv()
 
 
 class UMLSClient:
-    """Client for UMLS Terminology Services API."""
-    
+    """Client for UMLS Terminology Services API with 7-category classification."""
+
     BASE_URL = "https://uts-ws.nlm.nih.gov/rest"
-    
-    # Semantic type to category mapping
+
+    # Legacy mapping for backwards compatibility (deprecated)
+    # Use get_category_from_tui() from semantic_types.py instead
     CATEGORY_MAP = {
-        # Conditions (diseases, symptoms, findings)
-        'T047': 'CONDITION',  # Disease or Syndrome
-        'T048': 'CONDITION',  # Mental or Behavioral Dysfunction
-        'T184': 'CONDITION',  # Sign or Symptom
-        'T046': 'CONDITION',  # Pathologic Function
-        'T191': 'CONDITION',  # Neoplastic Process
-        
-        # Interventions (procedures, drugs, devices)
-        'T061': 'INTERVENTION',  # Therapeutic or Preventive Procedure
-        'T060': 'INTERVENTION',  # Diagnostic Procedure
-        'T121': 'INTERVENTION',  # Pharmacologic Substance
-        'T200': 'INTERVENTION',  # Clinical Drug
-        'T074': 'INTERVENTION',  # Medical Device
-        'T062': 'INTERVENTION',  # Research Activity (includes research interventions)
-        
-        # Outcomes (functions, findings, lab results)
-        'T042': 'OUTCOME',  # Organ or Tissue Function
-        'T039': 'OUTCOME',  # Physiologic Function
-        'T033': 'OUTCOME',  # Finding
-        'T034': 'OUTCOME',  # Laboratory or Test Result
-        'T040': 'OUTCOME',  # Organism Function
-        'T041': 'OUTCOME',  # Mental Process
-        
-        # Anatomy
-        'T023': 'ANATOMY',  # Body Part, Organ, or Organ Component
-        'T024': 'ANATOMY',  # Tissue
-        'T025': 'ANATOMY',  # Cell
-        'T029': 'ANATOMY',  # Body Location or Region
-        'T030': 'ANATOMY',  # Body Space or Junction
+        # CONDITION_DISEASE
+        'T047': 'CONDITION_DISEASE',
+        'T048': 'CONDITION_DISEASE',
+        'T184': 'CONDITION_DISEASE',
+        'T046': 'CONDITION_DISEASE',
+        'T191': 'CONDITION_DISEASE',
+        'T037': 'CONDITION_DISEASE',
+        'T049': 'CONDITION_DISEASE',
+        'T050': 'CONDITION_DISEASE',
+        'T190': 'CONDITION_DISEASE',
+
+        # INTERVENTION_EXPOSURE (procedures + drugs)
+        'T061': 'INTERVENTION_EXPOSURE',
+        'T060': 'INTERVENTION_EXPOSURE',
+        'T058': 'INTERVENTION_EXPOSURE',
+        'T059': 'INTERVENTION_EXPOSURE',
+        'T062': 'INTERVENTION_EXPOSURE',
+        'T063': 'INTERVENTION_EXPOSURE',
+        'T121': 'INTERVENTION_EXPOSURE',
+        'T200': 'INTERVENTION_EXPOSURE',
+        'T195': 'INTERVENTION_EXPOSURE',
+
+        # OUTCOME_MEASURE (physiology + phenomena)
+        'T042': 'OUTCOME_MEASURE',
+        'T039': 'OUTCOME_MEASURE',
+        'T033': 'OUTCOME_MEASURE',
+        'T034': 'OUTCOME_MEASURE',
+        'T040': 'OUTCOME_MEASURE',
+        'T041': 'OUTCOME_MEASURE',
+        'T032': 'OUTCOME_MEASURE',
+        'T043': 'OUTCOME_MEASURE',
+        'T044': 'OUTCOME_MEASURE',
+        'T045': 'OUTCOME_MEASURE',
+
+        # ANATOMY_SYSTEM
+        'T017': 'ANATOMY_SYSTEM',
+        'T018': 'ANATOMY_SYSTEM',
+        'T021': 'ANATOMY_SYSTEM',
+        'T022': 'ANATOMY_SYSTEM',
+        'T023': 'ANATOMY_SYSTEM',
+        'T024': 'ANATOMY_SYSTEM',
+        'T025': 'ANATOMY_SYSTEM',
+        'T026': 'ANATOMY_SYSTEM',
+        'T029': 'ANATOMY_SYSTEM',
+        'T030': 'ANATOMY_SYSTEM',
+        'T031': 'ANATOMY_SYSTEM',
+
+        # MECHANISM_BIOLOGICAL (genes + concepts)
+        'T028': 'MECHANISM_BIOLOGICAL',
+        'T085': 'MECHANISM_BIOLOGICAL',
+        'T086': 'MECHANISM_BIOLOGICAL',
+        'T087': 'MECHANISM_BIOLOGICAL',
+        'T088': 'MECHANISM_BIOLOGICAL',
+        'T116': 'MECHANISM_BIOLOGICAL',
+        'T123': 'MECHANISM_BIOLOGICAL',
+        'T124': 'MECHANISM_BIOLOGICAL',
+        'T125': 'MECHANISM_BIOLOGICAL',
+        'T126': 'MECHANISM_BIOLOGICAL',
+
+        # OBJECT_DEVICE
+        'T074': 'OBJECT_DEVICE',
+        'T075': 'OBJECT_DEVICE',
+        'T071': 'OBJECT_DEVICE',
+        'T072': 'OBJECT_DEVICE',
+        'T073': 'OBJECT_DEVICE',
+
+        # POPULATION_CONTEXT (living beings + activities)
+        'T016': 'POPULATION_CONTEXT',
+        'T096': 'POPULATION_CONTEXT',
+        'T097': 'POPULATION_CONTEXT',
+        'T098': 'POPULATION_CONTEXT',
+        'T099': 'POPULATION_CONTEXT',
+        'T100': 'POPULATION_CONTEXT',
+        'T101': 'POPULATION_CONTEXT',
     }
     
     def __init__(self, api_key: Optional[str] = None):
@@ -163,14 +225,13 @@ class UMLSClient:
     
     def classify_term(self, term: str) -> Dict:
         """
-        Classify a term into semantic categories.
-        
-        This is the main method for the POC - determines if a term
-        is a CONDITION, INTERVENTION, OUTCOME, ANATOMY, or OTHER.
-        
+        Classify a term into 7 semantic categories.
+
+        Uses the full 127 TUI mapping via semantic_types.py.
+
         Args:
             term: The term to classify (e.g., "neuromodulation")
-            
+
         Returns:
             {
                 'term': str,
@@ -178,13 +239,17 @@ class UMLSClient:
                 'name': str,  # Official UMLS name
                 'semantic_types': List[str],  # Human-readable type names
                 'tuis': List[str],  # Type unique identifiers
-                'category': str,  # CONDITION, INTERVENTION, OUTCOME, ANATOMY, OTHER
+                'semantic_groups': List[str],  # UMLS semantic group codes
+                'category': str,  # One of 7 categories or UNKNOWN
+                'category_enum': SemanticCategory,  # Enum value
+                'expansion_strategy': str,  # narrow/moderate/broad
+                'max_expansions': int,  # Max synonyms to use
                 'confidence': float  # 0-1 confidence score
             }
         """
         # Search for the term
         concepts = self.search_concept(term)
-        
+
         if not concepts:
             return {
                 'term': term,
@@ -192,64 +257,118 @@ class UMLSClient:
                 'name': term,
                 'semantic_types': [],
                 'tuis': [],
+                'semantic_groups': [],
                 'category': 'UNKNOWN',
+                'category_enum': SemanticCategory.UNKNOWN,
+                'expansion_strategy': 'minimal',
+                'max_expansions': 2,
                 'confidence': 0.0
             }
-        
+
         # Take the best match (first result)
         concept = concepts[0]
         cui = concept.get('ui')
         name = concept.get('name', term)
-        
+
         # Get semantic types
         sem_types = self.get_semantic_types(cui)
-        
-        # Extract TUIs and names
+
+        # Extract TUIs, names, and semantic groups
         tuis = []
         type_names = []
+        sem_groups = []
         for st in sem_types:
             uri = st.get('uri', '')
             tui = uri.split('/')[-1] if '/' in uri else ''
             tuis.append(tui)
             type_names.append(st.get('name', ''))
-        
-        # Determine category from first matching TUI
-        category = 'OTHER'
+            # Get semantic group for this TUI
+            sg = get_semantic_group(tui)
+            if sg and sg not in sem_groups:
+                sem_groups.append(sg)
+
+        # Determine category from first matching TUI using new 7-category system
+        category_enum = SemanticCategory.UNKNOWN
         for tui in tuis:
-            if tui in self.CATEGORY_MAP:
-                category = self.CATEGORY_MAP[tui]
+            cat = get_category_from_tui(tui)
+            if cat != SemanticCategory.UNKNOWN:
+                category_enum = cat
                 break
-        
+
+        # Get expansion rules for this category
+        expansion_rule = get_expansion_rule(category_enum)
+
         # Calculate confidence based on match quality
-        # Higher confidence if exact match or if term appears in name
         confidence = 0.8 if term.lower() in name.lower() else 0.6
-        
+
         return {
             'term': term,
             'cui': cui,
             'name': name,
             'semantic_types': type_names,
             'tuis': tuis,
-            'category': category,
+            'semantic_groups': sem_groups,
+            'category': category_enum.value,
+            'category_enum': category_enum,
+            'expansion_strategy': expansion_rule.strategy.value,
+            'max_expansions': expansion_rule.max_expansions,
             'confidence': confidence
         }
+
+    def classify_term_with_filtered_synonyms(self, term: str) -> Dict:
+        """
+        Classify term and get filtered synonyms based on category rules.
+
+        Combines classification with category-aware synonym filtering.
+
+        Args:
+            term: The term to classify
+
+        Returns:
+            Classification dict + 'filtered_synonyms' list
+        """
+        classification = self.classify_term(term)
+
+        if classification['cui']:
+            # Get raw synonyms from UMLS
+            raw_synonyms = self.get_synonyms(
+                classification['cui'],
+                max_synonyms=classification['max_expansions'] * 2
+            )
+            # Filter using category-specific anti-drift patterns
+            filtered = filter_by_category(raw_synonyms, classification['category_enum'])
+            # Limit to max for this category
+            classification['filtered_synonyms'] = filtered[:classification['max_expansions']]
+        else:
+            classification['filtered_synonyms'] = []
+
+        return classification
 
 
 # Quick test
 if __name__ == "__main__":
     client = UMLSClient()
-    
-    # Test classification
-    test_terms = ["multiple sclerosis", "neuromodulation", "motor function", "TMS"]
-    
-    print("UMLS Classification Test")
-    print("=" * 60)
-    
+
+    # Test 7-category classification
+    test_terms = [
+        "multiple sclerosis",   # CONDITION_DISEASE
+        "neuromodulation",      # INTERVENTION_EXPOSURE
+        "motor function",       # OUTCOME_MEASURE
+        "hippocampus",          # ANATOMY_SYSTEM
+        "dopamine",             # MECHANISM_BIOLOGICAL
+        "electrode",            # OBJECT_DEVICE
+        "elderly",              # POPULATION_CONTEXT
+    ]
+
+    print("UMLS 7-Category Classification Test")
+    print("=" * 70)
+
     for term in test_terms:
         result = client.classify_term(term)
         print(f"\nTerm: {term}")
         print(f"  CUI: {result['cui']}")
         print(f"  Name: {result['name']}")
         print(f"  Category: {result['category']}")
-        print(f"  Semantic Types: {result['semantic_types']}")
+        print(f"  Semantic Groups: {result['semantic_groups']}")
+        print(f"  Expansion: {result['expansion_strategy']} (max: {result['max_expansions']})")
         print(f"  Confidence: {result['confidence']:.2f}")

@@ -66,6 +66,13 @@ CAPABILITY_MATRIX = {
         'supports_abbreviation_expansion': True,
         'supports_component_detection': False,
         'supports_synonym_expansion': True
+    },
+    'SemanticClassification': {
+        'supports_semantic_classification': True,  # 7-category classification
+        'supports_abbreviation_expansion': True,   # NeuroDB abbreviations
+        'supports_component_detection': True,      # Category-based detection
+        'supports_synonym_expansion': True,        # With anti-drift filtering
+        'supports_category_specific_expansion': True  # NEW: Phase 1 feature
     }
 }
 
@@ -580,14 +587,187 @@ class FullHybridConfig:
         )
 
 
-# MVP Configuration Set (5 configs for comparison testing)
+class SemanticClassificationConfig:
+    """
+    7-Category Semantic Classification with Category-Specific Expansion.
+
+    NEW: Phase 1 implementation of semantic classification architecture.
+
+    Key features:
+    - 7 semantic categories (vs old 5): POPULATION_CONTEXT, CONDITION_DISEASE,
+      INTERVENTION_EXPOSURE, OUTCOME_MEASURE, ANATOMY_SYSTEM, MECHANISM_BIOLOGICAL,
+      OBJECT_DEVICE
+    - Category-specific expansion rules (anti-drift filtering)
+    - Full 127 TUI mapping (vs old 21)
+    - Hybrid lookup: NeuroDB → UMLS fallback
+
+    Flow:
+    1. NeuroDB lookup (highest priority, 569 curated terms)
+    2. UMLS API fallback (127 TUIs → 7 categories)
+    3. Category-specific expansion with anti-drift filtering
+
+    Reference: docs/architecture/semantic-classification-architecture.md
+    """
+    name = "SemanticClassification"
+    use_neurodb = True
+    use_umls = True
+    use_pubtator = False  # Simplified flow for Phase 1
+
+    def __init__(self):
+        """Initialize with NeuroDB + UMLS (7-category) classification."""
+        from poc_api_first.clients.umls import UMLSClient
+        from poc_api_first.semantic_types import SemanticCategory, get_category_from_tui
+        from poc_api_first.expansion_rules import (
+            get_expansion_rule,
+            filter_by_category,
+            ExpansionStrategy,
+        )
+
+        api_key = os.getenv("UMLS_API_KEY")
+        if not api_key:
+            raise ValueError("UMLS_API_KEY environment variable not set")
+
+        self.umls_client = UMLSClient(api_key)
+
+        # Store imports for later use
+        self._SemanticCategory = SemanticCategory
+        self._get_category_from_tui = get_category_from_tui
+        self._get_expansion_rule = get_expansion_rule
+        self._filter_by_category = filter_by_category
+        self._ExpansionStrategy = ExpansionStrategy
+
+        # Load NeuroDB-2 with relative path
+        neurodb_path = Path(__file__).parent.parent.parent / 'data' / 'neuro_terms.json'
+
+        if not neurodb_path.exists():
+            raise FileNotFoundError(
+                f"NeuroDB-2 data file not found: {neurodb_path}\n"
+                "Please ensure data/neuro_terms.json exists in project root."
+            )
+
+        with open(neurodb_path) as f:
+            raw_data = json.load(f)
+
+        # Build lookup dictionaries from NeuroDB
+        self.abbreviations = {}
+        self.term_lookup = {}
+        for entry in raw_data:
+            term_name = entry.get('Term', '').lower()
+            abbrev = entry.get('Abbreviation')
+
+            # Store full entry for term lookup
+            if term_name:
+                self.term_lookup[term_name] = entry
+
+            # Store abbreviation mapping
+            if abbrev and term_name:
+                self.abbreviations[abbrev.lower()] = entry.get('Term')
+
+    def classify_term(self, term):
+        """
+        7-category semantic classification with hybrid lookup.
+
+        1. Check NeuroDB for abbreviation expansion
+        2. UMLS API for full 127 TUI → 7 category classification
+        3. Apply category-specific expansion rules
+        """
+        original_term = term
+        disambiguation_source = 'UMLS_direct'
+
+        # Layer 1: NeuroDB abbreviation expansion
+        if term.lower() in self.abbreviations:
+            term = self.abbreviations[term.lower()]
+            disambiguation_source = 'NeuroDB'
+
+        # Layer 2: UMLS 7-category classification
+        result = self.umls_client.classify_term(term)
+
+        # Get category-specific expansion rule
+        category_enum = result.get('category_enum', self._SemanticCategory.UNKNOWN)
+        expansion_rule = self._get_expansion_rule(category_enum)
+
+        # Enhance result with expansion metadata
+        result['original_term'] = original_term
+        result['disambiguation_source'] = disambiguation_source
+        result['expansion_rule'] = {
+            'strategy': expansion_rule.strategy.value,
+            'max_expansions': expansion_rule.max_expansions,
+            'include_types': expansion_rule.include_types,
+            'exclude_types': expansion_rule.exclude_types,
+        }
+
+        # Apply confidence based on source
+        if disambiguation_source == 'NeuroDB':
+            result['confidence'] = 0.95
+        elif result.get('cui'):
+            result['confidence'] = 0.8
+        else:
+            result['confidence'] = 0.3
+
+        return result
+
+    def get_filtered_synonyms(self, classification):
+        """
+        Get synonyms filtered by category-specific anti-drift rules.
+
+        Args:
+            classification: Result from classify_term()
+
+        Returns:
+            List of filtered synonyms (respects max_expansions)
+        """
+        if not classification.get('cui'):
+            return []
+
+        category_enum = classification.get('category_enum', self._SemanticCategory.UNKNOWN)
+        max_syns = classification.get('expansion_rule', {}).get('max_expansions', 5)
+
+        # Get raw synonyms from UMLS
+        raw_synonyms = self.umls_client.get_synonyms(
+            classification['cui'],
+            max_synonyms=max_syns * 2  # Get extra for filtering
+        )
+
+        # Filter using category-specific anti-drift patterns
+        filtered = self._filter_by_category(raw_synonyms, category_enum)
+
+        return filtered[:max_syns]
+
+    def _classify_terms_batch(self, terms):
+        """Batch classification - wraps classify_term for pipeline callback."""
+        return [self.classify_term(t) for t in terms]
+
+    def run(self, user_input, days=60, max_results=20, verbose=False):
+        """
+        Execute semantic pipeline with 7-category classification.
+
+        Uses category-aware expansion rules to prevent semantic drift.
+        """
+        from poc_api_first.poc_pipeline import SemanticQueryPipeline
+
+        pipeline = SemanticQueryPipeline(
+            umls_client=self.umls_client,
+            pubmed_client=None,    # Use default
+            pubtator_client=None,  # Not used in Phase 1
+            classify_fn=self._classify_terms_batch
+        )
+        return pipeline.run(
+            user_input=user_input,
+            days=days,
+            max_results=max_results,
+            verbose=verbose
+        )
+
+
+# MVP Configuration Set (6 configs for comparison testing)
 MVP_CONFIGURATIONS = [
     # LexStream2BaselineConfig,  # Reference only - requires Lex Stream 2 implementation
     NeuroDBOnlyConfig,            # Single-layer: NeuroDB abbreviation expansion only
     UMLSOnlyConfig,               # Single-layer: UMLS semantic classification only
     PubTatorOnlyConfig,           # Single-layer: PubTator disambiguation only
     UMLSPubTatorConfig,           # Two-layer: UMLS + PubTator (proven POC)
-    FullHybridConfig              # Three-layer: NeuroDB + PubTator + UMLS
+    FullHybridConfig,             # Three-layer: NeuroDB + PubTator + UMLS
+    SemanticClassificationConfig  # NEW: 7-category with anti-drift (Phase 1)
 ]
 
 # Full Configuration Set (for comprehensive testing when all implementations ready)
@@ -597,5 +777,6 @@ ALL_CONFIGURATIONS = [
     UMLSOnlyConfig,
     PubTatorOnlyConfig,
     UMLSPubTatorConfig,
-    FullHybridConfig
+    FullHybridConfig,
+    SemanticClassificationConfig  # NEW: 7-category with anti-drift (Phase 1)
 ]

@@ -11,12 +11,13 @@
 Neuroscience terminology database powering [Lex Stream](../Lex-stream-2) query expansion pipeline. Evolved from manual Wikipedia curation (649 terms) to hybrid API-first architecture (PubTator + UMLS + local database).
 
 ### Current Status (Dec 2025)
-**Phase 6**: Hybrid Approach (POC validated)
-- **API Layer**: PubTator (abbreviations) + UMLS (semantics)
-- **Local Database**: 649 high-quality terms (synonyms, abbreviations)
-- **POC Results**: 5 relevant papers (vs 1-14 with blind expansion)
+**Phase 6**: Semantic Classification (Phase 1 Complete)
+- **7-Category Classification**: POPULATION_CONTEXT, CONDITION_DISEASE, INTERVENTION_EXPOSURE, OUTCOME_MEASURE, ANATOMY_SYSTEM, MECHANISM_BIOLOGICAL, OBJECT_DEVICE
+- **127 TUI Mappings**: Complete UMLS Semantic Network coverage (vs 21 legacy)
+- **Anti-Drift Filtering**: Category-specific forbidden patterns to prevent semantic drift
+- **POC Results**: 5-20 relevant papers (vs 1,943 with blind expansion) - 97% precision improvement
 
-**Next**: Production implementation (Redis caching, <2s latency target)
+**Next**: Phase 2 (Category-specific expanders), Phase 3 (NeuroDB enrichment)
 
 ---
 
@@ -24,6 +25,9 @@ Neuroscience terminology database powering [Lex Stream](../Lex-stream-2) query e
 
 ```
 docs/
+├── codebase-summary.md              # ✨ NEW: Comprehensive codebase summary (Phase 1 complete)
+├── architecture/
+│   └── semantic-classification-architecture.md  # Phase 1 reference architecture
 ├── timeline/
 │   └── PROJECT_TIMELINE.md          # Complete project chronology (Phase 1-6)
 ├── decisions/
@@ -80,17 +84,25 @@ plans/ (root)
 - Metrics comparison across phases
 - Lessons learned
 
-### Understanding Current Architecture (Hybrid Approach)
-🏗️ **Phase 5 POC**: `../poc-api-first/POC_RESULTS.md`
-- API-first validation (PubTator + UMLS)
-- "MS + neuromodulation" case study
-- 5-layer pipeline architecture
-- Performance metrics (15s latency, 100% accuracy)
+### Understanding Current Architecture (Semantic Classification)
+🏗️ **Phase 1 Summary**: `codebase-summary.md#phase-1-implementation`
+- 7-category classification (127 TUI mappings)
+- Category-specific expansion rules
+- Anti-drift filtering (forbidden patterns)
+- SemanticClassificationConfig for webapp comparison
+- Files: `semantic_types.py`, `expansion_rules.py`, `umls.py`, `test_configurations.py`
 
-🏗️ **Phase 6 Plan**: `timeline/PROJECT_TIMELINE.md#phase-6`
-- Hybrid architecture (API + local database)
-- NeuroDB-2 value proposition
-- Production roadmap (Weeks 1-4)
+🏗️ **Architecture Reference**: `architecture/semantic-classification-architecture.md`
+- The core problem (semantic drift)
+- Key stakeholder decisions (James's feedback)
+- 7-category expansion rules
+- Data sources (NeuroDB, UMLS, PubTator)
+- Webapp comparison framework
+
+🏗️ **Phase 2-3 Roadmap**: `codebase-summary.md#next-steps`
+- Phase 2: Category-specific expanders (Weeks 3-4)
+- Phase 3: NeuroDB enrichment with semantic_type (Weeks 4-5)
+- Deferred: MeSH hierarchy trees
 
 ### UMLS Integration (Phase 2)
 📊 **Import Tracker**: `decisions/ontology-import-tracker.md`
@@ -369,7 +381,7 @@ plans/ (root)
 ### What's the current database version?
 **Phase 1** (production): v2.0.0 - 649 terms, 42.7% synonyms, 22.2% abbreviations
 **Phase 2** (experimental): v3.0.0 - 325K terms, 10% synonyms, 0.5% abbreviations
-**Phase 6** (planned): Hybrid - Local + API (PubTator + UMLS)
+**Phase 6** (in progress): Semantic Classification - 7 categories, 127 TUI mappings, anti-drift filtering
 
 ### Why did we switch to API-first?
 UMLS local database had low synonym/abbreviation coverage (10%/0.5% vs 42.7%/22.2% manual). PubTator API solves abbreviation disambiguation ("MS" → "Multiple Sclerosis"). UMLS API provides semantic classification (CONDITION, INTERVENTION). Hybrid approach combines local quality + API breadth.
@@ -418,8 +430,8 @@ v3.0.0: `neuro_terms_v3.0.0_umls.json` (325K terms)
 
 ## Document Status
 ✅ **COMPLETE**
-**Last Major Update**: Dec 3, 2025 (Phase 6 reorganization)
-**Maintained By**: Engineering Team
+**Last Major Update**: Dec 6, 2025 (Phase 1 - Semantic Classification complete)
+**Maintained By**: docs-manager agent
 **Review Frequency**: After each major phase/pivot
 
 ---
